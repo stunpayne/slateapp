@@ -1,5 +1,9 @@
 {
   "name": "slate_mobile_app",
+  "author": {
+    "name": "YSSKrishna"
+  },
+  "description": "Slate App with Google Calender integration",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,8 +14,16 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/google-signin": "^4.0.3",
+    "axios": "^0.19.2",
     "react": "16.11.0",
-    "react-native": "0.62.2"
+    "react-native": "0.62.2",
+    "react-native-gesture-handler": "^1.6.1",
+    "react-native-screens": "^2.7.0",
+    "react-navigation": "^3.11.0",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "7.10.3",
