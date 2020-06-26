@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "753236024860",
+    "firebase_url": "https://slate-mobile-app.firebaseio.com",
+    "project_id": "slate-mobile-app",
+    "storage_bucket": "slate-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753236024860:android:2e6b307e4a536ef7b749d9",
+        "android_client_info": {
+          "package_name": "com.slate_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "753236024860-4b8vpr25bohnecrkhgcfvip2sjdamopg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.slate_mobile_app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "753236024860-p9s569jhv6aruadsh3f25sbutc0gasqf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQl8bpI95rBgtmBYUsgo-XMPiV6thCl8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "753236024860-p9s569jhv6aruadsh3f25sbutc0gasqf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
