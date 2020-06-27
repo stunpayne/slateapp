@@ -70,6 +70,7 @@ class LoginScreen extends Component {
       this.setState({ userInfo, isLoading:false });
       this.props.navigation.navigate("Home");
     } catch (error) {
+      this.setState({ isLoading:false });
       console.log('Message', error.message);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User Cancelled the Login Flow');
