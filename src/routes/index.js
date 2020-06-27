@@ -3,12 +3,14 @@ import { createDrawerNavigator, createStackNavigator, createAppContainer } from 
 import SplashScreen from '../screens/splash';
 import HomeScreen from "../screens/home";
 import LoginScreen from '../screens/login';
+import IntroScreen from '../screens/intro';
 // import DrawerContainer from '../screens/drawer/index.js';
 
 const MainNavigator = createStackNavigator({
   Splash:SplashScreen,
   Login:LoginScreen,
-  Home:HomeScreen
+  Home:HomeScreen,
+  Intro:IntroScreen
 }, {
   initialRouteName: 'Splash',
   defaulfNavigationOptions: ({ navigation }) => ({
