@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { SIGNIN_SCOPES, WEB_CLIENT_ID } from 'react-native-dotenv';
+import { SIGNIN_SCOPE1, SIGNIN_SCOPE2, WEB_CLIENT_ID } from 'react-native-dotenv';
 import {
   GoogleSignin,
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-community/google-signin';
+import { connect } from 'react-redux';
+import { setCurrentUserInfo, logoutUser} from '../../redux/actions/authActions';
 
 class LoginScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -26,9 +28,9 @@ class LoginScreen extends Component {
     // initial configuration
     GoogleSignin.configure({
       //It is mandatory to call this method before attempting to call signIn()
-      scopes: [SIGNIN_SCOPES],
+      scopes: [SIGNIN_SCOPE1,SIGNIN_SCOPE2],
       // Repleace with your webClientId generated from Firebase console
-      webClientId: WEB_CLIENT_ID,
+      webClientId: WEB_CLIENT_ID
     });
     //Check if user is already signed in
     this._isSignedIn();
@@ -50,8 +52,9 @@ class LoginScreen extends Component {
   _getCurrentUserInfo = async () => {
     try {
       const userInfo = await GoogleSignin.signInSilently();
-      console.log('User Info --> ', userInfo);
-      this.setState({ userInfo: userInfo });
+      // console.log('User Info --> ', userInfo);
+      // this.setState({ userInfo: userInfo });
+      this.props.setCurrentUserInfo(userInfo);
       this.props.navigation.navigate("Home");
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_REQUIRED) {
@@ -66,8 +69,10 @@ class LoginScreen extends Component {
     try {
       this.setState({isLoading:true})
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      this.setState({ userInfo, isLoading:false });
+      const userInfo = await GoogleSignin.signIn();      
+      this.props.setCurrentUserInfo(userInfo);
+      // console.log('User Info --> ', userInfo);
+      this.setState({ isLoading:false });
       this.props.navigation.navigate("Home");
     } catch (error) {
       this.setState({ isLoading:false });
@@ -100,9 +105,12 @@ class LoginScreen extends Component {
       </View>
     );
   }
-}
+};
 
-export default LoginScreen;
+const mapStateToProps = state => ({  
+});
+
+export default connect(mapStateToProps, { setCurrentUserInfo })(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {
