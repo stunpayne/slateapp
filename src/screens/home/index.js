@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ActivityIndicator, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { _signOut } from "../../redux/actions/authActions";
@@ -80,7 +80,7 @@ class HomeScreen extends Component {
     const userInfo = this.props.userInfo;
     const { isLoading, events } = this.props;
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Text style={{ fontSize: 23 }}>Welcome:{userInfo && userInfo.user ? userInfo.user.name : ""}</Text>
         </View>
@@ -115,7 +115,7 @@ class HomeScreen extends Component {
             <Text>Logout</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }

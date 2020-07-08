@@ -22,10 +22,23 @@ export const fetchCalendarEvents = (params) => async dispatch => {
   const request = await googleApiClient();
   request.get(`${CALENDAR_BASE_URL}/calendars/primary/events`, { params }).then(res => {
     if (res.status == 200) {
-      console.log("res", res.data);
       if (res.data.items && res.data.items.length > 0) {
         dispatch(setCalendarEvents(res.data.items));
       }
+    };
+  }).catch(err => {
+    console.log("err from fetch calendar tasks", err);
+    dispatch(setDataLoadingStatus(false));
+  });
+};
+
+export const addCalendarEvent = (data) => async dispatch => {
+  dispatch(setDataLoadingStatus(true));
+  const request = await googleApiClient();
+  request.post(`${CALENDAR_BASE_URL}/calendars/primary/events`, data).then(res => {
+    if (res.status == 200) {
+      console.log("add event", res.data);
+      dispatch(setDataLoadingStatus(false));
     };
   }).catch(err => {
     console.log("err from fetch calendar tasks", err);
