@@ -17,7 +17,7 @@ const getAuthInstance = async () => {
   try {
     const tokens = await GoogleSignin.getTokens();
     if (tokens.accessToken && tokens.accessToken.length > 0) {
-      console.log("token", tokens.accessToken);
+      // console.log("token", tokens.accessToken);
       defaultOptions = {
         headers: {
           Authorization: `Bearer ${tokens.accessToken}`

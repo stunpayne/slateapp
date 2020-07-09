@@ -1,0 +1,5 @@
+v2
+-fixed persisting store after logout
+-suppressed animated warning on metro console
+-added validation to add task form
+

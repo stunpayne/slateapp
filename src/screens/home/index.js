@@ -22,7 +22,11 @@ class HomeScreen extends Component {
   });
 
   componentDidMount() {
-    this.props.isAuthenticated && this.props.userInfo != null ? null : this.navigateBack();
+    if (this.props.isAuthenticated && this.props.userInfo != null) {
+      this.getEvents();
+    } else {
+      this.navigateBack();
+    }
   };
 
   componentDidUpdate() {
@@ -43,7 +47,6 @@ class HomeScreen extends Component {
       maxResults: 10,
       timeMin: new Date().toISOString()
     };
-    console.log( params.timeMin);
     this.props.fetchCalendarEvents(params);
   };
 
@@ -143,12 +146,12 @@ const styles = StyleSheet.create({
   },
   eventsList: {
     alignItems: 'center',
-    margin:10
+    margin: 10
   },
   eventItem: {
     padding: 10,
     backgroundColor: "#20d3d6",
-    margin:5
+    margin: 5
   },
   button: {
     alignItems: "center",

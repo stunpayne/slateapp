@@ -1,7 +1,7 @@
-import { SET_CURRENT_USER, LOGOUT_USER } from '../types';
+import { SET_CURRENT_USER } from '../types';
 
 const initialState = {
-  userInfo: null,  
+  userInfo: null,
   isAuthenticated: false
 };
 
@@ -13,8 +13,6 @@ export default (state = initialState, action) => {
         isAuthenticated: true,
         userInfo: action.info,
       };
-    case LOGOUT_USER:
-      return initialState;
     default:
       return state;
   }
