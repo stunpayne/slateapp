@@ -44,7 +44,7 @@ class HomeScreen extends Component {
 
   getEvents = () => {
     var params = {
-      maxResults: 10,
+      maxResults: 250,
       timeMin: new Date().toISOString()
     };
     this.props.fetchCalendarEvents(params);
@@ -55,7 +55,7 @@ class HomeScreen extends Component {
   };
 
   onPressAddTask = () => {
-    this.props.navigation.navigate('AddTask');
+    this.props.navigation.navigate('AddTask', { getEvents: this.getEvents });
   };
 
   renderEventsList = (events) => {
@@ -82,6 +82,7 @@ class HomeScreen extends Component {
   render() {
     const userInfo = this.props.userInfo;
     const { isLoading, events } = this.props;
+    console.log("events", events);
     return (
       <ScrollView style={styles.container}>
         <View style={styles.header}>
@@ -95,7 +96,7 @@ class HomeScreen extends Component {
         <View>
           <TouchableOpacity
             style={styles.button}
-            onPress={this.getEvents}
+            onPress={() => this.getEvents()}
           >
             <View>
               <Text>Fetch Events</Text>
