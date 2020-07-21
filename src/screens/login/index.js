@@ -25,13 +25,13 @@ class LoginScreen extends Component {
   };
 
   componentDidMount() {
-    // initial configuration
-    GoogleSignin.configure({
-      //It is mandatory to call this method before attempting to call signIn()
-      scopes: [SIGNIN_SCOPE1,SIGNIN_SCOPE2],
-      // Repleace with your webClientId generated from Firebase console
-      webClientId: WEB_CLIENT_ID
-    });
+    // // initial configuration
+    // GoogleSignin.configure({
+    //   //It is mandatory to call this method before attempting to call signIn()
+    //   scopes: [SIGNIN_SCOPE1,SIGNIN_SCOPE2],
+    //   // Repleace with your webClientId generated from Firebase console
+    //   webClientId: WEB_CLIENT_ID
+    // });
     //Check if user is already signed in
     this._isSignedIn();
   }

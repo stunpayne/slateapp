@@ -14,6 +14,7 @@ class IntroScreen extends Component {
   onSubmit = () => {
     storeData(SKIP_INTRODUCTION, "true");
     this.props.navigation.navigate("Login");
+    this.props.navigation.state.params._handleGoogleSigninConfig();
   };
 
   render() {

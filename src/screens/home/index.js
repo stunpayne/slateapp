@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ActivityIndicator, ScrollView } from 'react-native';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { _signOut } from "../../redux/actions/authActions";
 import { NavigationActions, StackActions } from 'react-navigation';
 import { fetchCalendarEvents } from '../../redux/actions/taskActions';
-import moment from 'moment';
+import { storeData, retrieveData } from '../../config/storage';
+import { FIRST_TIME_USE } from '../../constants';
 
 class HomeScreen extends Component {
 
@@ -23,7 +25,15 @@ class HomeScreen extends Component {
 
   componentDidMount() {
     if (this.props.isAuthenticated && this.props.userInfo != null) {
-      this.getEvents();
+      setTimeout(() => {
+        retrieveData(FIRST_TIME_USE).then((value) => {
+          if (!value) {
+            this.props.navigation.navigate('UserConfig');
+          } else if (value) {
+            this.getEvents();
+          }
+        });
+      }, 1000);
     } else {
       this.navigateBack();
     }
@@ -57,6 +67,11 @@ class HomeScreen extends Component {
   onPressAddTask = () => {
     this.props.navigation.navigate('AddTask', { getEvents: this.getEvents });
   };
+
+  onPressUserConfig = () => {
+    this.props.navigation.navigate('UserConfig');
+  }
+
 
   renderEventsList = (events) => {
     return events.map((item) => {
@@ -104,6 +119,12 @@ class HomeScreen extends Component {
             </View>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.onPressUserConfig}
+          >
+            <Text>UserConfig</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}

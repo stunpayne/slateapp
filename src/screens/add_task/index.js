@@ -188,8 +188,9 @@ class AddTaskScreen extends Component {
               deadline_ts
             };
 
+            let timeZone = res.data.timeZone;
             let calenderEvents = res.data.items;
-            let dndSlots = this.extractDNDSlots(now, deadline_ts);          
+            let dndSlots = this.extractDNDSlots(now, deadline_ts);
             const compressedCalenderEvents = calenderEvents.map(element => {
               return {
                 start: element.start,
@@ -205,14 +206,14 @@ class AddTaskScreen extends Component {
               this.props.addCalendarEvent(scheduleEvent).then(response => {
                 if (response.status == 200) {
                   Alert.alert("Success!", "Event scheduled successfully",
-                  [
-                    {
-                      text: 'Cancel',
-                      onPress: () => console.log('Cancel Pressed'),
-                      style: 'cancel'
-                    },
-                    { text: 'Go to Dashboard', onPress: () => this.props.navigation.navigate('Home') }
-                  ]
+                    [
+                      {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel'
+                      },
+                      { text: 'Go to Dashboard', onPress: () => this.props.navigation.navigate('Home') }
+                    ]
                   );
                   this.setState({ dataLoading: false });
                   this.getEvents();
@@ -233,10 +234,10 @@ class AddTaskScreen extends Component {
     }
   };
 
-  getEvents(){
+  getEvents() {
     this.props.navigation.state.params.getEvents();
   };
-  
+
   render() {
     const { errors, fields, show, dataLoading } = this.state;
     const RED_ASTERISK = <Text style={{ color: "#ff0000" }}>*</Text>;
@@ -264,9 +265,10 @@ class AddTaskScreen extends Component {
                 ) : null}
 
                 {/* Deadline Date */}
-                <Item style={{ marginTop: 15 }}>
-                  <Button style={{ minWidth: 120 }} primary onPress={() => this.setState({ show: 'endDate' })}><Text> Deadline Date {RED_ASTERISK}</Text></Button>
-                  <Label style={{ marginLeft: 20 }}>{fields.endDate != null ? moment(fields.endDate).format('l') : <Text>Select Deadline Date </Text>}</Label>
+                <Item style={{ marginTop: 40 }}>
+                  <TouchableOpacity onPress={() => this.setState({ show: 'endDate' })}>
+                    <Label>{fields.endDate != null ? moment(fields.endDate).format('l') : <Text>Select Deadline Date {RED_ASTERISK}</Text>}</Label>
+                  </TouchableOpacity>
                   {show == 'endDate' && <DateTimePicker
                     value={fields.endDate != null ? fields.endDate : new Date()}
                     minimumDate={new Date()}
@@ -281,9 +283,10 @@ class AddTaskScreen extends Component {
                 ) : null}
 
                 {/* Deadline Time */}
-                <Item style={{ marginTop: 15 }}>
-                  <Button style={{ minWidth: 120 }} primary onPress={() => this.setState({ show: 'endTime' })}><Text> Deadline Time {RED_ASTERISK}</Text></Button>
-                  <Label style={{ marginLeft: 20 }}>{fields.endTime != null ? moment(fields.endTime).format('LT') : <Text>Select Deadline Time </Text>}</Label>
+                <Item style={{ marginTop: 40 }}>
+                  <TouchableOpacity onPress={() => this.setState({ show: 'endTime' })}>
+                    <Label>{fields.endTime != null ? moment(fields.endTime).format('LT') : <Text>Select Deadline Time {RED_ASTERISK}</Text>}</Label>
+                  </TouchableOpacity>
                   {show == 'endTime' && <DateTimePicker
                     value={fields.endTime != null ? fields.endTime : new Date()}
                     mode="time"
