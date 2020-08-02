@@ -61,7 +61,10 @@ class HomeScreen extends Component {
   };
 
   revokeAccess = () => {
-    this.props._signOut();
+    let data = {
+      id: this.props.slateInfo.id
+    };
+    this.props._signOut(data);
   };
 
   onPressAddTask = () => {
@@ -147,6 +150,7 @@ class HomeScreen extends Component {
 
 const mapStateToProps = state => ({
   userInfo: state.auth.userInfo,
+  slateInfo: state.auth.slateInfo,
   isAuthenticated: state.auth.isAuthenticated,
   events: state.task.events,
   isLoading: state.task.isLoading

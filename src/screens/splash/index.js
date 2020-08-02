@@ -7,7 +7,7 @@ import {
   statusCodes,
 } from '@react-native-community/google-signin';
 import { connect } from 'react-redux';
-import { setCurrentUserInfo } from '../../redux/actions/authActions';
+import { createFetchSlateUser } from '../../redux/actions/authActions';
 import { storeData, retrieveData } from '../../config/storage';
 import { SKIP_INTRODUCTION } from '../../constants';
 
@@ -29,7 +29,7 @@ class SplashScreen extends Component {
           this._handleGoogleSigninConfig();
         }
       });
-    }, 1000);
+    }, 5000);
   };
 
   _handleGoogleSigninConfig() {
@@ -61,9 +61,7 @@ class SplashScreen extends Component {
     try {
       const userInfo = await GoogleSignin.signInSilently();
       // console.log('User Info --> ', userInfo);
-      // this.setState({ userInfo: userInfo });
-      this.props.setCurrentUserInfo(userInfo);
-      this.props.navigation.navigate("Home");
+      this.props.createFetchSlateUser(userInfo);
     } catch (error) {
       this.props.navigation.navigate('Login');
       if (error.code === statusCodes.SIGN_IN_REQUIRED) {
@@ -88,7 +86,7 @@ class SplashScreen extends Component {
 const mapStateToProps = state => ({
 });
 
-export default connect(mapStateToProps, { setCurrentUserInfo })(SplashScreen);
+export default connect(mapStateToProps, { createFetchSlateUser })(SplashScreen);
 
 const styles = StyleSheet.create({
   container: {

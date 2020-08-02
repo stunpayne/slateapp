@@ -1,6 +1,7 @@
-import { SET_CURRENT_USER } from '../types';
+import { SET_CURRENT_USER, SET_SLATE_USER } from '../types';
 
 const initialState = {
+  slateInfo: null,
   userInfo: null,
   isAuthenticated: false
 };
@@ -12,6 +13,13 @@ export default (state = initialState, action) => {
         ...state,
         isAuthenticated: true,
         userInfo: action.info,
+      };
+    case SET_SLATE_USER:
+      return {
+        ...state,
+        isAuthenticated: true,
+        slateInfo: action.slateInfo,
+        userInfo: action.userInfo,
       };
     default:
       return state;

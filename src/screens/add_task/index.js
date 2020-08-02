@@ -7,8 +7,8 @@ import moment from 'moment';
 import { addCalendarEvent } from '../../redux/actions/taskActions';
 import { googleApiClient } from '../../services/GoogleApiService';
 import { CALENDAR_BASE_URL, SLOT_TYPE_FREE } from '../../constants';
-import { createSlots, getDNDSlots } from '../../services/SlotterService';
-import { USER_DND_ENABLED, USER_DND_START, USER_DND_STOP } from '../../constants';
+import { createSlots, getDndSlots } from '../../services/SlotterService';
+import { USER_DND_ENABLED, USER_DND_START, USER_DND_STOP, USER_TIMEZONE } from '../../constants';
 
 class AddTaskScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -71,7 +71,7 @@ class AddTaskScreen extends Component {
     }
 
     if (typeof fields['endDate'] !== 'undefined') {
-      if (!this.isValid(fields['endDate'])) {
+      if (!this.isValidDate(fields['endDate'])) {
         formIsValid = false;
         errors['endDate'] = "Valid Deadline date is required";
       }
@@ -83,7 +83,7 @@ class AddTaskScreen extends Component {
     };
 
     if (typeof fields['endTime'] !== 'undefined') {
-      if (!this.isValid(fields['endTime'])) {
+      if (!this.isValidDate(fields['endTime'])) {
         formIsValid = false;
         errors['endTime'] = "Valid Deadline time is required";
       }
@@ -107,14 +107,14 @@ class AddTaskScreen extends Component {
     return formIsValid;
   };
 
-  isValid(date) {
+  isValidDate(date) {
     if (date != null) {
       return !isNaN(date.getTime())
     }
     return false;
   };
 
-  compareTimeStamps(start, end) {
+  checkEndValid(start, end) {
     let isValid = true;
     if (!moment(end).isAfter(start)) {
       isValid = false;
@@ -125,16 +125,13 @@ class AddTaskScreen extends Component {
   extractDateTime(date, time) {
     let datestr = moment(date.toISOString()).format('L');
     let timestr = moment(time.toISOString()).format('LT');
-    console.log("date", datestr, "time", timestr);
     let final = moment(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A').toISOString();
+    console.log("date", datestr, "time", timestr, "final", final);
     return final;
   };
 
-  extractDNDSlots(start, end) {
-    let dndSlots = [];
-    if (USER_DND_ENABLED) {
-      dndSlots = getDNDSlots(start, end, USER_DND_START, USER_DND_STOP);
-    };
+  fetchDndSlots(start, end) {
+    let dndSlots = USER_DND_ENABLED ? getDndSlots(start, end, USER_DND_START, USER_DND_STOP) : [];
     return dndSlots;
   };
 
@@ -168,18 +165,18 @@ class AddTaskScreen extends Component {
     if (this.validateForm()) {
       const { duration, endDate, endTime, eventName } = this.state.fields;
       let deadline_ts = this.extractDateTime(endDate, endTime); //get deadline timestamp
-      let isValidDeadline_ts = this.compareTimeStamps(new Date().toISOString(), deadline_ts) //checking if deadline_ts > now
-      if (isValidDeadline_ts) {
+      let isDeadlineValid = this.checkEndValid(moment().toISOString(), deadline_ts) //checking if deadline_ts > now
+      if (isDeadlineValid) {
         this.setState({ dataLoading: true });
         const request = await googleApiClient();
-        let now = new Date().toISOString();
+        let now = moment().toISOString();
         var params = {
           timeMin: now,
           timeMax: deadline_ts,
           singleEvents: true //to expand recurring events to single events
         };
 
-        //fetching calender events till deadline
+        // fetching calender events till deadline
         request.get(`${CALENDAR_BASE_URL}/calendars/primary/events`, { params }).then(res => {
           if (res.status == 200 && res.data.items) {
             let task = {
@@ -188,20 +185,20 @@ class AddTaskScreen extends Component {
               deadline_ts
             };
 
-            let timeZone = res.data.timeZone;
             let calenderEvents = res.data.items;
-            let dndSlots = this.extractDNDSlots(now, deadline_ts);
-            const compressedCalenderEvents = calenderEvents.map(element => {
+            let dndSlots = this.fetchDndSlots(now, deadline_ts);
+            const refactoredEvents = calenderEvents.map(element => {
               return {
                 start: element.start,
                 end: element.end
               }
             });
-            let mergedEvents = [...compressedCalenderEvents, ...dndSlots];
+            let mergedEvents = [...refactoredEvents, ...dndSlots];
             let slots = createSlots(deadline_ts, mergedEvents);
             let scheduleEvent = this.scheduleSlot(task, slots);
 
             if (scheduleEvent) {
+              // free slot found
               console.log("scheduleEvent", scheduleEvent);
               this.props.addCalendarEvent(scheduleEvent).then(response => {
                 if (response.status == 200) {
@@ -222,7 +219,10 @@ class AddTaskScreen extends Component {
                 console.log("err from adding calender task", err2);
                 this.setState({ dataLoading: false });
               });
-            };
+            } else {
+              // No free slot found
+              this.setState({ dataLoading: false });
+            }
           }
         }).catch(err => {
           console.log("err from fetch calendar tasks", err);

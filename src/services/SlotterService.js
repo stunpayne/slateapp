@@ -1,5 +1,6 @@
-import { SLOT_TYPE_FREE, SLOT_TYPE_BLOCKED_BY_USER, SLOT_TYPE_OCCUPIED, SLOT_TYPE_SCHEDULE } from '../constants';
+import { SLOT_TYPE_FREE, SLOT_TYPE_BLOCKED_BY_USER, SLOT_TYPE_OCCUPIED, SLOT_TYPE_SCHEDULE, USER_TIMEZONE } from '../constants';
 import moment from 'moment';
+import momentz from 'moment-timezone';
 
 function SimpleSlot(startTime, endTime, slotType) {
   let slot = {};
@@ -127,46 +128,50 @@ export function createSlots(deadline, calendarEvents) {
 };
 
 
-export function getDNDSlots(start_ts, end_ts, dnd_start_time, dnd_end_time) {
+export function getDndSlots(start_ts, end_ts, dnd_start_time, dnd_end_time) {
   var dndSlots = [];
   let start_date = moment(start_ts).format('L');
   // let end_date = moment(end_ts).format('L');
   let dnd_start_ts;
   let dnd_end_ts;
 
+
+  // const getTimeWithTz = (datestr, timestr) => moment(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A');
+  const getTimeWithTz = (datestr, timestr) => momentz.tz(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A', USER_TIMEZONE);
+
   let dummy_date = "01/01/2000";
-  const getTime = (datestr, timestr) => moment(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A');
+  var a = dummy_date + " " + dnd_start_time;
+  var b = dummy_date + " " + dnd_end_time;
 
-  var time1Date = getTime(dummy_date, dnd_start_time);
-  var time2Date = getTime(dummy_date, dnd_end_time);
+  var aDate = new Date(a).getTime();
+  var bDate = new Date(b).getTime();
 
-  if (time1Date >= time2Date) {
-    // firstDay - 10:30 PM, NextDay - 6:30 AM
-    // console.log("time1", time1Date, time2Date);
-    dnd_start_ts = getTime(start_date, dnd_start_time);
-    dnd_end_ts = getTime(start_date, dnd_end_time).add(1, "days");
-  } else {
+  if (aDate < bDate) {
+    // 'a happened before b'
     // firstDay - 6:30 AM, sameDay - 12:30 PM
-    // console.log("time2", time1Date, time2Date);
-    dnd_start_ts = getTime(start_date, dnd_start_time);
-    dnd_end_ts = getTime(start_date, dnd_end_time);
-  };
+    dnd_start_ts = getTimeWithTz(start_date, dnd_start_time);
+    dnd_end_ts = getTimeWithTz(start_date, dnd_end_time);
+  } else if (aDate > bDate) {
+    // 'a happend after b'
+    // firstDay - 10:30 PM, NextDay - 6:30 AM
+    dnd_start_ts = getTimeWithTz(start_date, dnd_start_time);
+    dnd_end_ts = getTimeWithTz(start_date, dnd_end_time).add(1, "days");
+  } else {
+    // console.log('a and b happened at the same time')
+    return [];
+  }
 
-  console.log("dnd_start_ts, dnd_end_ts", dnd_start_ts.format(), dnd_end_ts.format());
+  console.log("dnd_start_ts, dnd_end_ts", dnd_start_ts.toObject(), dnd_end_ts.toObject());
+  let dnd_end_ts_copy = dnd_end_ts.clone();;
 
-  if (moment() < dnd_end_ts.subtract(1, "days")) {
-    let dndSlot = getDndSlot(moment().format(), dnd_end_ts.format());
+  if (moment() < dnd_end_ts_copy.subtract(1, "days")) {
+    let now = moment().format();
+    let dndSlot = getDndSlot(now, dnd_end_ts_copy.format());
     dndSlots.push(dndSlot);
   };
 
   while (dnd_start_ts < moment(end_ts)) {
-    let dndSlot = getDndSlot(dnd_start_ts.format(), dnd_end_ts.format());
-    
-    if (dnd_start_ts < moment(start_ts)) {
-      dndSlot.start = {
-        "dateTime": moment(start_ts).format()
-      };
-    };
+    let dndSlot = getDndSlot(dnd_start_ts.format(), dnd_end_ts.format());    
 
     if (dnd_end_ts > moment(end_ts)) {
       dndSlot.end = {
@@ -179,7 +184,6 @@ export function getDNDSlots(start_ts, end_ts, dnd_start_time, dnd_end_time) {
     dndSlots.push(dndSlot);
   };
 
-
-  // console.log(dndSlots);
+  console.log(dndSlots);
   return dndSlots;
 };

@@ -7,7 +7,7 @@ import {
   statusCodes,
 } from '@react-native-community/google-signin';
 import { connect } from 'react-redux';
-import { setCurrentUserInfo, logoutUser} from '../../redux/actions/authActions';
+import { setCurrentUserInfo, createFetchSlateUser } from '../../redux/actions/authActions';
 
 class LoginScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -20,7 +20,7 @@ class LoginScreen extends Component {
     super(props);
     this.state = {
       gettingLoginStatus: true,
-      isLoading:false
+      isLoading: false
     };
   };
 
@@ -53,9 +53,8 @@ class LoginScreen extends Component {
     try {
       const userInfo = await GoogleSignin.signInSilently();
       // console.log('User Info --> ', userInfo);
-      // this.setState({ userInfo: userInfo });
-      this.props.setCurrentUserInfo(userInfo);
-      this.props.navigation.navigate("Home");
+      this.props.createFetchSlateUser(userInfo);
+      // this.props.navigation.navigate("Home");
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_REQUIRED) {
         console.log('User has not signed in yet');
@@ -67,15 +66,15 @@ class LoginScreen extends Component {
 
   _signIn = async () => {
     try {
-      this.setState({isLoading:true})
+      this.setState({ isLoading: true })
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();      
-      this.props.setCurrentUserInfo(userInfo);
+      const userInfo = await GoogleSignin.signIn();
+      this.props.createFetchSlateUser(userInfo);
       // console.log('User Info --> ', userInfo);
-      this.setState({ isLoading:false });
-      this.props.navigation.navigate("Home");
+      this.setState({ isLoading: false });
+      // this.props.navigation.navigate("Home");
     } catch (error) {
-      this.setState({ isLoading:false });
+      this.setState({ isLoading: false });
       console.log('Message', error.message);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log('User Cancelled the Login Flow');
@@ -107,10 +106,10 @@ class LoginScreen extends Component {
   }
 };
 
-const mapStateToProps = state => ({  
+const mapStateToProps = state => ({
 });
 
-export default connect(mapStateToProps, { setCurrentUserInfo })(LoginScreen);
+export default connect(mapStateToProps, { setCurrentUserInfo, createFetchSlateUser })(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {
