@@ -4,6 +4,8 @@ import { Container, Header, Content, Form, Item, Input, Button, Text, Label, Pic
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { getTimeZoneList } from './timezone_helper';
+import { connect } from 'react-redux';
+import { updateSlateUser } from '../../redux/actions/authActions';
 
 class UserConfigurationScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -19,12 +21,94 @@ class UserConfigurationScreen extends Component {
   };
 
   componentDidMount() {
+    this.populateForm();
+  };
+
+  populateForm = () => {
     let timezones = getTimeZoneList();
-    this.setState({ timezones });
+    let fields = {};
+    if (this.props.slateInfo.name) {
+      fields.name = this.props.slateInfo.name;
+    };
+
+    if (this.props.slateInfo.default_timezone) {
+      fields.timezone = this.props.slateInfo.default_timezone;
+    };
+
+    if (this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours) {
+      let wh = this.props.slateInfo.preferences.working_hours;
+
+      let start = new Date();
+      start.setHours(parseInt(wh.wh_start.slice(0,2)));
+      start.setMinutes(parseInt(wh.wh_start.slice(3,5)));
+
+      let end = new Date();
+      end.setHours(parseInt(wh.wh_end.slice(0,2)));
+      end.setMinutes(parseInt(wh.wh_end.slice(3,5)));
+
+      fields.wh_start = start;
+      fields.wh_end = end;
+    };
+
+    this.setState({ timezones, fields });
   }
 
+  validateForm = () => {
+    let fields = this.state.fields;
+    let errors = {};
+    let formIsValid = true;
+
+    if (!fields['name']) {
+      formIsValid = false;
+      errors['name'] = "Name is required";
+    };
+
+    if (typeof fields['name'] !== 'undefined') {
+      if (fields['name'].length == 0) {
+        formIsValid = false;
+        errors['duration'] = "Valid name is required";
+      };
+    };
+
+    if (!fields['timezone']) {
+      formIsValid = false;
+      errors['timezone'] = "Timezone is required";
+    };
+
+    if (!fields['wh_start']) {
+      formIsValid = false;
+      errors['wh_start'] = "Working Hours Start is required";
+    };
+
+    if (!fields['wh_end']) {
+      formIsValid = false;
+      errors['wh_end'] = "Working Hours End is required";
+    };
+
+    this.setState({
+      errors: errors,
+    });
+    return formIsValid;
+  };
+
   onSubmit = () => {
-    console.log("submit pressed", this.state.fields);
+    if (this.validateForm()) {
+      let fields = this.state.fields;
+      // console.log("submit pressed", fields);
+      let data = {};
+      data.id = this.props.slateInfo.id;
+      data.name = fields.name;
+      data.default_timezone = fields.timezone;
+      data.preferences = {
+        working_hours: {
+          wh_start: moment(fields.wh_start).format('HH:mm'),
+          wh_end: moment(fields.wh_end).format('HH:mm')
+        },
+        push_notifications: false
+      }
+      // console.log("data submitteed", data);
+      this.props.updateSlateUser(data);
+    };
   };
 
   onPickerChange = (e, name) => {
@@ -44,6 +128,7 @@ class UserConfigurationScreen extends Component {
 
   render() {
     const { errors, fields, show, dataLoading, timezones } = this.state;
+    const { isLoading } = this.props;
     const RED_ASTERISK = <Text style={{ color: "#ff0000" }}>*</Text>;
     return (
       <Container>
@@ -118,7 +203,7 @@ class UserConfigurationScreen extends Component {
               >
                 <View>
                   <Text>Submit</Text>
-                  {dataLoading ? <ActivityIndicator size="large" color="white" /> : null}
+                  {dataLoading || isLoading ? <ActivityIndicator size="large" color="white" /> : null}
                 </View>
               </TouchableOpacity>
             </Form>
@@ -129,7 +214,13 @@ class UserConfigurationScreen extends Component {
   }
 }
 
-export default UserConfigurationScreen;
+const mapStateToProps = state => ({
+  userInfo: state.auth.userInfo,
+  slateInfo: state.auth.slateInfo,
+  isLoading: state.auth.isLoading
+});
+
+export default connect(mapStateToProps, { updateSlateUser })(UserConfigurationScreen);
 
 const styles = StyleSheet.create({
   button: {

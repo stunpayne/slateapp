@@ -122,6 +122,7 @@ class HomeScreen extends Component {
             </View>
           </TouchableOpacity>
 
+
           <TouchableOpacity
             style={styles.button}
             onPress={this.onPressUserConfig}
@@ -143,7 +144,7 @@ class HomeScreen extends Component {
             <Text>Logout</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </ScrollView >
     );
   }
 }

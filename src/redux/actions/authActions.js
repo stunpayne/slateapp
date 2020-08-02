@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, LOGOUT_USER, SET_SLATE_USER } from '../types';
+import { SET_CURRENT_USER, LOGOUT_USER, SET_SLATE_USER, SET_SLATE_UPDATED_USER, AUTH_DATA_LOADING_STATUS } from '../types';
 import { GoogleSignin } from '@react-native-community/google-signin';
 import axios from 'axios';
 import { base_url } from '../../config/urls';
@@ -24,6 +24,20 @@ export function setSlateInfo(userInfo, slateInfo) {
     type: SET_SLATE_USER,
     userInfo: userInfo,
     slateInfo: slateInfo
+  };
+};
+
+export function setUpdatedSlateInfo(slateInfo){
+  return {
+    type: SET_SLATE_UPDATED_USER,
+    slateInfo: slateInfo
+  };
+}
+
+export function setDataLoadingStatus(status) {
+  return {
+    type: AUTH_DATA_LOADING_STATUS,
+    payload: status
   };
 };
 
@@ -58,7 +72,22 @@ export const createFetchSlateUser = (userInfo) => dispatch => {
         console.log("err in fetchSlateUser", err.response.data);
       }
     });
-}
+};
+
+
+export const updateSlateUser = (data) => dispatch => {
+  dispatch(setDataLoadingStatus(true));
+  axios.put(`${base_url}/api/user/update`, data)
+    .then(res => {
+      if (res.status == 200 || res.status == 201) {
+        dispatch(setUpdatedSlateInfo(res.data.data));
+      }
+    }).catch(error => {
+      dispatch(setDataLoadingStatus(false));
+      console.log("error in updateSlateUser", error.response.data);
+    });
+};
+
 
 export const _signOut = (data) => async dispatch => {
   //Remove user session from the device.
