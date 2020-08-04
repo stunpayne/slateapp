@@ -4,11 +4,11 @@ import { Container, Header, Content, Form, Item, Input, Button, Text, Label } fr
 import { connect } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import { addCalendarEvent } from '../../redux/actions/taskActions';
+import { addCalendarEvent, addSlateTask } from '../../redux/actions/taskActions';
 import { googleApiClient } from '../../services/GoogleApiService';
 import { CALENDAR_BASE_URL, SLOT_TYPE_FREE } from '../../constants';
-import { createSlots, getDndSlots } from '../../services/SlotterService';
-import { USER_DND_ENABLED, USER_DND_START, USER_DND_STOP, USER_TIMEZONE } from '../../constants';
+import { createSlots } from '../../services/SlotterService';
+import { isValidDate, checkEndValid, extractDateTime, fetchDndSlots } from './helper';
 
 class AddTaskScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -23,13 +23,27 @@ class AddTaskScreen extends Component {
   };
 
   componentDidMount() {
-    this.props.isAuthenticated && this.props.userInfo != null ? null : this.navigateBack();
+    // Redirecting if any details  are missing
+    this.handleRedirection();
   };
 
   componentDidUpdate() {
-    // Redirecting to login page
-    this.props.isAuthenticated && this.props.userInfo != null ? null : this.navigateBack();
+    // Redirecting if any details  are missing
+    this.handleRedirection()
   };
+
+  handleRedirection = () => {
+    if (this.props.isAuthenticated && this.props.userInfo != null) {
+      if (this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours) {
+        // no issues
+      } else {
+        console.log("fill user working hours details");
+        this.props.navigation.navigate('Home');
+      }
+    } else {
+      this.navigateBack();
+    };
+  }
 
   navigateBack = () => {
     const resetAction = StackActions.reset({
@@ -71,7 +85,7 @@ class AddTaskScreen extends Component {
     }
 
     if (typeof fields['endDate'] !== 'undefined') {
-      if (!this.isValidDate(fields['endDate'])) {
+      if (!isValidDate(fields['endDate'])) {
         formIsValid = false;
         errors['endDate'] = "Valid Deadline date is required";
       }
@@ -83,7 +97,7 @@ class AddTaskScreen extends Component {
     };
 
     if (typeof fields['endTime'] !== 'undefined') {
-      if (!this.isValidDate(fields['endTime'])) {
+      if (!isValidDate(fields['endTime'])) {
         formIsValid = false;
         errors['endTime'] = "Valid Deadline time is required";
       }
@@ -105,35 +119,9 @@ class AddTaskScreen extends Component {
       errors: errors,
     });
     return formIsValid;
-  };
+  };  
 
-  isValidDate(date) {
-    if (date != null) {
-      return !isNaN(date.getTime())
-    }
-    return false;
-  };
-
-  checkEndValid(start, end) {
-    let isValid = true;
-    if (!moment(end).isAfter(start)) {
-      isValid = false;
-    };
-    return isValid
-  };
-
-  extractDateTime(date, time) {
-    let datestr = moment(date.toISOString()).format('L');
-    let timestr = moment(time.toISOString()).format('LT');
-    let final = moment(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A').toISOString();
-    console.log("date", datestr, "time", timestr, "final", final);
-    return final;
-  };
-
-  fetchDndSlots(start, end) {
-    let dndSlots = USER_DND_ENABLED ? getDndSlots(start, end, USER_DND_START, USER_DND_STOP) : [];
-    return dndSlots;
-  };
+  
 
   scheduleSlot(task, slots) {
     const freeSlot = slots.find((slot) => {
@@ -164,8 +152,8 @@ class AddTaskScreen extends Component {
   onSubmit = async () => {
     if (this.validateForm()) {
       const { duration, endDate, endTime, eventName } = this.state.fields;
-      let deadline_ts = this.extractDateTime(endDate, endTime); //get deadline timestamp
-      let isDeadlineValid = this.checkEndValid(moment().toISOString(), deadline_ts) //checking if deadline_ts > now
+      let deadline_ts = extractDateTime(endDate, endTime); //get deadline timestamp
+      let isDeadlineValid = checkEndValid(moment().toISOString(), deadline_ts) //checking if deadline_ts > now
       if (isDeadlineValid) {
         this.setState({ dataLoading: true });
         const request = await googleApiClient();
@@ -186,7 +174,7 @@ class AddTaskScreen extends Component {
             };
 
             let calenderEvents = res.data.items;
-            let dndSlots = this.fetchDndSlots(now, deadline_ts);
+            let dndSlots = fetchDndSlots(now, deadline_ts, this.props.slateInfo);
             const refactoredEvents = calenderEvents.map(element => {
               return {
                 start: element.start,
@@ -202,18 +190,35 @@ class AddTaskScreen extends Component {
               console.log("scheduleEvent", scheduleEvent);
               this.props.addCalendarEvent(scheduleEvent).then(response => {
                 if (response.status == 200) {
-                  Alert.alert("Success!", "Event scheduled successfully",
-                    [
-                      {
-                        text: 'Cancel',
-                        onPress: () => console.log('Cancel Pressed'),
-                        style: 'cancel'
-                      },
-                      { text: 'Go to Dashboard', onPress: () => this.props.navigation.navigate('Home') }
-                    ]
-                  );
-                  this.setState({ dataLoading: false });
-                  this.getEvents();
+                  let slateTask = {
+                    user_id: this.props.slateInfo.id,
+                    title: eventName,
+                    deadline: deadline_ts,
+                    duration: duration,
+                    category: "default",
+                    status: "SCHEDULED",
+                    start: scheduleEvent.start.dateTime,
+                    end: scheduleEvent.end.dateTime
+                  };
+                  this.props.addSlateTask(slateTask).then(res => {
+                    if (res.status == 200 || res.status == 201) {
+                      Alert.alert("Success!", "Event scheduled successfully",
+                        [
+                          {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel'
+                          },
+                          { text: 'Go to Dashboard', onPress: () => this.props.navigation.navigate('Home') }
+                        ]
+                      );
+                      this.setState({ dataLoading: false });
+                      this.getSlateTasks();
+                    }
+                  }).catch(err3 => {
+                    console.log("err from adding slate task", err3);
+                    this.setState({ dataLoading: false });
+                  })
                 };
               }).catch(err2 => {
                 console.log("err from adding calender task", err2);
@@ -234,8 +239,8 @@ class AddTaskScreen extends Component {
     }
   };
 
-  getEvents() {
-    this.props.navigation.state.params.getEvents();
+  getSlateTasks() {
+    this.props.navigation.state.params.getSlateTasks();
   };
 
   render() {
@@ -337,11 +342,12 @@ class AddTaskScreen extends Component {
 
 const mapStateToProps = state => ({
   userInfo: state.auth.userInfo,
+  slateInfo: state.auth.slateInfo,
   isAuthenticated: state.auth.isAuthenticated,
   isLoading: state.task.isAdding
 });
 
-export default connect(mapStateToProps, { addCalendarEvent })(AddTaskScreen);
+export default connect(mapStateToProps, { addCalendarEvent, addSlateTask })(AddTaskScreen);
 
 const styles = StyleSheet.create({
   container: {

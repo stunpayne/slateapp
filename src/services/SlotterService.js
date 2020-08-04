@@ -1,4 +1,4 @@
-import { SLOT_TYPE_FREE, SLOT_TYPE_BLOCKED_BY_USER, SLOT_TYPE_OCCUPIED, SLOT_TYPE_SCHEDULE, USER_TIMEZONE } from '../constants';
+import { SLOT_TYPE_FREE, SLOT_TYPE_BLOCKED_BY_USER, SLOT_TYPE_OCCUPIED, SLOT_TYPE_SCHEDULE } from '../constants';
 import moment from 'moment';
 import momentz from 'moment-timezone';
 
@@ -128,7 +128,7 @@ export function createSlots(deadline, calendarEvents) {
 };
 
 
-export function getDndSlots(start_ts, end_ts, dnd_start_time, dnd_end_time) {
+export function getDndSlots(start_ts, end_ts, dnd_start_time, dnd_end_time, timezone) {
   var dndSlots = [];
   let start_date = moment(start_ts).format('L');
   // let end_date = moment(end_ts).format('L');
@@ -137,7 +137,7 @@ export function getDndSlots(start_ts, end_ts, dnd_start_time, dnd_end_time) {
 
 
   // const getTimeWithTz = (datestr, timestr) => moment(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A');
-  const getTimeWithTz = (datestr, timestr) => momentz.tz(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A', USER_TIMEZONE);
+  const getTimeWithTz = (datestr, timestr) => momentz.tz(datestr + ' ' + timestr, 'MM/DD/YYYY h:mm A', timezone);
 
   let dummy_date = "01/01/2000";
   var a = dummy_date + " " + dnd_start_time;

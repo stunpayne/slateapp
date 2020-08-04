@@ -4,7 +4,7 @@ import axios from 'axios';
 import { base_url } from '../../config/urls';
 import { storeData, retrieveData } from '../../config/storage';
 import NavigationService from '../../services/NavigationService';
-import { SLATE_USER_CREATED } from '../../constants';
+import { SLATE_USER_CREATED, FIRST_TIME_USE } from '../../constants';
 
 export function setCurrentUserInfo(info, tokens) {
   return {
@@ -81,6 +81,7 @@ export const updateSlateUser = (data) => dispatch => {
     .then(res => {
       if (res.status == 200 || res.status == 201) {
         dispatch(setUpdatedSlateInfo(res.data.data));
+        storeData(FIRST_TIME_USE, "false");
       }
     }).catch(error => {
       dispatch(setDataLoadingStatus(false));

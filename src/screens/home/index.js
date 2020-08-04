@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { _signOut } from "../../redux/actions/authActions";
 import { NavigationActions, StackActions } from 'react-navigation';
-import { fetchCalendarEvents } from '../../redux/actions/taskActions';
+import { fetchSlateTasks, slateTaskMarkComplete } from '../../redux/actions/taskActions';
 import { storeData, retrieveData } from '../../config/storage';
-import { FIRST_TIME_USE } from '../../constants';
+import { FIRST_TIME_USE, TaskStatus } from '../../constants';
 
 class HomeScreen extends Component {
 
@@ -22,6 +22,9 @@ class HomeScreen extends Component {
       />
     )
   });
+  state = {
+    selected:null
+  }
 
   componentDidMount() {
     if (this.props.isAuthenticated && this.props.userInfo != null) {
@@ -30,7 +33,7 @@ class HomeScreen extends Component {
           if (!value) {
             this.props.navigation.navigate('UserConfig');
           } else if (value) {
-            this.getEvents();
+            this.getSlateTasks();
           }
         });
       }, 1000);
@@ -52,23 +55,32 @@ class HomeScreen extends Component {
     this.props.navigation.dispatch(resetAction);
   };
 
-  getEvents = () => {
-    var params = {
-      maxResults: 250,
-      timeMin: new Date().toISOString()
-    };
-    this.props.fetchCalendarEvents(params);
+  // getEvents = () => {
+  //   var params = {
+  //     maxResults: 250,
+  //     timeMin: new Date().toISOString()
+  //   };
+  //   this.props.fetchCalendarEvents(params);
+  // };
+
+  getSlateTasks = () => {
+    let data = { user_id: this.props.slateInfo.id };
+    this.props.fetchSlateTasks(data);
   };
 
+  onPressMarkComplete = (taskId) => {
+    this.setState({selected:taskId});
+    let data = { user_id: this.props.slateInfo.id, id: taskId };
+    this.props.slateTaskMarkComplete(data);
+  }
+
   revokeAccess = () => {
-    let data = {
-      id: this.props.slateInfo.id
-    };
+    let data = { id: this.props.slateInfo.id };
     this.props._signOut(data);
   };
 
   onPressAddTask = () => {
-    this.props.navigation.navigate('AddTask', { getEvents: this.getEvents });
+    this.props.navigation.navigate('AddTask', { getSlateTasks: this.getSlateTasks });
   };
 
   onPressUserConfig = () => {
@@ -76,22 +88,51 @@ class HomeScreen extends Component {
   }
 
 
-  renderEventsList = (events) => {
-    return events.map((item) => {
+  renderTasksList = (tasks) => {
+    return tasks.map((item) => {
       return (
         <View style={styles.eventItem}>
           <Text>
-            {item.summary}
+            {item.title}
           </Text>
           <Text>
-            Creator : {item.creator.email}
+            Status : {item.status}
           </Text>
           <Text>
-            Start: {moment(item.start.dateTime).format('lll')}
+            Duration: {item.duration}
           </Text>
           <Text>
-            End: {moment(item.end.dateTime).format('lll')}
+            Deadline: {moment(item.deadline).format('lll')}
           </Text>
+
+          {
+            item.start ?
+              <React.Fragment>
+                <Text>
+                  Start: {moment(item.start).format('lll')}
+                </Text>
+              </React.Fragment> : null
+          }
+
+          {
+            item.end ?
+              <React.Fragment>
+                <Text>
+                  End: {moment(item.end).format('lll')}
+                </Text>
+              </React.Fragment> : null
+          }
+
+          {
+            item.status == TaskStatus.SCHEDULED ?
+              <React.Fragment>
+                <TouchableOpacity style={styles.completeButton} onPress={() => this.onPressMarkComplete(item.id)}>
+                  <Text>Complete</Text>
+                  {this.state.selected == item.id && this.props.isUpdating ? <ActivityIndicator size="large" color="white" /> : null}
+                </TouchableOpacity>
+              </React.Fragment>
+              : null
+          }
         </View>
       );
     });
@@ -99,8 +140,8 @@ class HomeScreen extends Component {
 
   render() {
     const userInfo = this.props.userInfo;
-    const { isLoading, events } = this.props;
-    console.log("events", events);
+    const { isLoading, tasks } = this.props;
+    console.log("tasks", tasks);
     return (
       <ScrollView style={styles.container}>
         <View style={styles.header}>
@@ -108,16 +149,16 @@ class HomeScreen extends Component {
         </View>
 
         <View style={styles.eventsList}>
-          {events.length > 0 ? this.renderEventsList(events) : <Text>No Events</Text>}
+          {tasks.length > 0 ? this.renderTasksList(tasks) : <Text>No Slate Tasks</Text>}
         </View>
 
         <View>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.getEvents()}
+            onPress={() => this.getSlateTasks()}
           >
             <View>
-              <Text>Fetch Events</Text>
+              <Text>Fetch Slate Tasks</Text>
               {isLoading ? <ActivityIndicator size="large" color="white" /> : null}
             </View>
           </TouchableOpacity>
@@ -130,12 +171,16 @@ class HomeScreen extends Component {
             <Text>UserConfig</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.onPressAddTask}
-          >
-            <Text>AddTask</Text>
-          </TouchableOpacity>
+          {
+            this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours ?
+              <TouchableOpacity
+                style={styles.button}
+                onPress={this.onPressAddTask}
+              >
+                <Text>AddTask</Text>
+              </TouchableOpacity> : null
+          }
+
 
           <TouchableOpacity
             style={styles.button}
@@ -153,11 +198,12 @@ const mapStateToProps = state => ({
   userInfo: state.auth.userInfo,
   slateInfo: state.auth.slateInfo,
   isAuthenticated: state.auth.isAuthenticated,
-  events: state.task.events,
-  isLoading: state.task.isLoading
+  tasks: state.task.tasks,
+  isLoading: state.task.isLoading,
+  isUpdating: state.task.isUpdating,
 });
 
-export default connect(mapStateToProps, { _signOut, fetchCalendarEvents })(HomeScreen);
+export default connect(mapStateToProps, { _signOut, fetchSlateTasks, slateTaskMarkComplete })(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -185,6 +231,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#ef6b91",
     padding: 10,
     margin: 20
+  },
+  completeButton: {
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#ef6b91",
+    marginTop: 20
   },
   image: {
     marginTop: 15,

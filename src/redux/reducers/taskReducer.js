@@ -1,19 +1,22 @@
-import { FETCH_CALENDAR_EVENTS, TASK_DATA_LOADING_STATUS, TASK_DATA_ADDING_STATUS } from '../types';
+import { FETCH_SLATE_TASKS, TASK_DATA_LOADING_STATUS, TASK_DATA_ADDING_STATUS, TASK_DATA_UPDATE_STATUS } from '../types';
 
 const initialState = {
   isLoading: false,
   isAdding: false,
-  events: []
+  isUpdating: false,
+  events: [],
+  tasks: []
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_CALENDAR_EVENTS:
+    case FETCH_SLATE_TASKS:
       return {
         ...state,
-        events: action.payload,
+        tasks: action.payload,
         isLoading: false,
-        isAdding: false
+        isAdding: false,
+        isUpdating:false
       };
     case TASK_DATA_LOADING_STATUS:
       return {
@@ -24,6 +27,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isAdding: action.payload,
+      };
+    case TASK_DATA_UPDATE_STATUS:
+      return {
+        ...state,
+        isUpdating: action.payload,
       };
     default:
       return state;
