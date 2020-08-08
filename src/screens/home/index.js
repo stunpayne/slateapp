@@ -1,42 +1,36 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ActivityIndicator, ScrollView } from 'react-native';
-import moment from 'moment';
+import { View, Text, StyleSheet } from 'react-native';
+import MyDayScreen from "./tabs/my_day";
+import { Container, Tab, Tabs } from 'native-base';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
-import { _signOut } from "../../redux/actions/authActions";
 import { NavigationActions, StackActions } from 'react-navigation';
-import { fetchSlateTasks, slateTaskMarkComplete } from '../../redux/actions/taskActions';
-import { storeData, retrieveData } from '../../config/storage';
-import { FIRST_TIME_USE, TaskStatus } from '../../constants';
+
+const tabMapping = { 0: 'MyDay', 1: 'Tab2', 2: 'Tab3' };
 
 class HomeScreen extends Component {
 
-  static navigationOptions = ({ navigation }) => ({
-    title: 'Home',
-    headerLeft: (
-      <MenuImage
-        onPress={() => {
-          console.log("menu image pressed");
-          // navigation.openDrawer();
-        }}
-      />
-    )
-  });
-  state = {
-    selected:null
-  }
+  static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state;
+
+    return {
+      title: params.currentTab ? params.currentTab : tabMapping[0],
+      headerRight: (
+        <MenuImage
+          onPress={() => {
+            console.log("menu image pressed");
+            // navigation.openDrawer();
+          }}
+        />
+      )
+    }
+  };
 
   componentDidMount() {
     if (this.props.isAuthenticated && this.props.userInfo != null) {
-      setTimeout(() => {
-        retrieveData(FIRST_TIME_USE).then((value) => {
-          if (!value) {
-            this.props.navigation.navigate('UserConfig');
-          } else if (value) {
-            this.getSlateTasks();
-          }
-        });
-      }, 1000);
+      this.props.navigation.setParams({
+        currentTab: tabMapping[0],
+      });
     } else {
       this.navigateBack();
     }
@@ -55,141 +49,39 @@ class HomeScreen extends Component {
     this.props.navigation.dispatch(resetAction);
   };
 
-  // getEvents = () => {
-  //   var params = {
-  //     maxResults: 250,
-  //     timeMin: new Date().toISOString()
-  //   };
-  //   this.props.fetchCalendarEvents(params);
-  // };
-
-  getSlateTasks = () => {
-    let data = { user_id: this.props.slateInfo.id };
-    this.props.fetchSlateTasks(data);
+  render_dummy = (title) => {
+    return (
+      <View><Text>{title}</Text></View>
+    )
   };
 
-  onPressMarkComplete = (taskId) => {
-    this.setState({selected:taskId});
-    let data = { user_id: this.props.slateInfo.id, id: taskId };
-    this.props.slateTaskMarkComplete(data);
-  }
-
-  revokeAccess = () => {
-    let data = { id: this.props.slateInfo.id };
-    this.props._signOut(data);
-  };
-
-  onPressAddTask = () => {
-    this.props.navigation.navigate('AddTask', { getSlateTasks: this.getSlateTasks });
-  };
-
-  onPressUserConfig = () => {
-    this.props.navigation.navigate('UserConfig');
-  }
-
-
-  renderTasksList = (tasks) => {
-    return tasks.map((item) => {
-      return (
-        <View style={styles.eventItem}>
-          <Text>
-            {item.title}
-          </Text>
-          <Text>
-            Status : {item.status}
-          </Text>
-          <Text>
-            Duration: {item.duration}
-          </Text>
-          <Text>
-            Deadline: {moment(item.deadline).format('lll')}
-          </Text>
-
-          {
-            item.start ?
-              <React.Fragment>
-                <Text>
-                  Start: {moment(item.start).format('lll')}
-                </Text>
-              </React.Fragment> : null
-          }
-
-          {
-            item.end ?
-              <React.Fragment>
-                <Text>
-                  End: {moment(item.end).format('lll')}
-                </Text>
-              </React.Fragment> : null
-          }
-
-          {
-            item.status == TaskStatus.SCHEDULED ?
-              <React.Fragment>
-                <TouchableOpacity style={styles.completeButton} onPress={() => this.onPressMarkComplete(item.id)}>
-                  <Text>Complete</Text>
-                  {this.state.selected == item.id && this.props.isUpdating ? <ActivityIndicator size="large" color="white" /> : null}
-                </TouchableOpacity>
-              </React.Fragment>
-              : null
-          }
-        </View>
-      );
+  handleTabChange(i) {
+    this.props.navigation.setParams({
+      currentTab: tabMapping[i],
     });
-  };
+  }
+
+  renderTabs = () => {
+    return (
+      <Tabs tabBarPosition="bottom" onChangeTab={({ i }) => this.handleTabChange(i)} tabBarUnderlineStyle={{ height: 0 }}>
+        <Tab heading="MyDay" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+          <MyDayScreen navigation={this.props.navigation} />
+        </Tab>
+        <Tab heading="Tab2" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+          {this.render_dummy("Tab2")}
+        </Tab>
+        <Tab heading="Tab3" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+          {this.render_dummy("Tab3")}
+        </Tab>
+      </Tabs>
+    );
+  }
 
   render() {
-    const userInfo = this.props.userInfo;
-    const { isLoading, tasks } = this.props;
-    console.log("tasks", tasks);
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={{ fontSize: 23 }}>Welcome:{userInfo && userInfo.user ? userInfo.user.name : ""}</Text>
-        </View>
-
-        <View style={styles.eventsList}>
-          {tasks.length > 0 ? this.renderTasksList(tasks) : <Text>No Slate Tasks</Text>}
-        </View>
-
-        <View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => this.getSlateTasks()}
-          >
-            <View>
-              <Text>Fetch Slate Tasks</Text>
-              {isLoading ? <ActivityIndicator size="large" color="white" /> : null}
-            </View>
-          </TouchableOpacity>
-
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.onPressUserConfig}
-          >
-            <Text>UserConfig</Text>
-          </TouchableOpacity>
-
-          {
-            this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours ?
-              <TouchableOpacity
-                style={styles.button}
-                onPress={this.onPressAddTask}
-              >
-                <Text>AddTask</Text>
-              </TouchableOpacity> : null
-          }
-
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.revokeAccess}
-          >
-            <Text>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView >
+      <Container>
+        {this.renderTabs()}
+      </Container>
     );
   }
 }
@@ -198,52 +90,19 @@ const mapStateToProps = state => ({
   userInfo: state.auth.userInfo,
   slateInfo: state.auth.slateInfo,
   isAuthenticated: state.auth.isAuthenticated,
-  tasks: state.task.tasks,
-  isLoading: state.task.isLoading,
-  isUpdating: state.task.isUpdating,
 });
 
-export default connect(mapStateToProps, { _signOut, fetchSlateTasks, slateTaskMarkComplete })(HomeScreen);
+
+export default connect(mapStateToProps, {})(HomeScreen);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  tabStyle: {
+    backgroundColor: "#ffffff",
   },
-  header: {
-    marginTop: 100,
-    alignSelf: "center"
+  activeTabStyle: {
+    backgroundColor: "#ffffff",
   },
-  center: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  eventsList: {
-    alignItems: 'center',
-    margin: 10
-  },
-  eventItem: {
-    padding: 10,
-    backgroundColor: "#20d3d6",
-    margin: 5
-  },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#ef6b91",
-    padding: 10,
-    margin: 20
-  },
-  completeButton: {
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#ef6b91",
-    marginTop: 20
-  },
-  image: {
-    marginTop: 15,
-    width: 150,
-    height: 150,
-    borderColor: "rgba(0,0,0,0.2)",
-    borderWidth: 3,
-    borderRadius: 150
-  },
-});
+  activeTextStyle: {
+    color: "#4158fb",
+  }
+})
