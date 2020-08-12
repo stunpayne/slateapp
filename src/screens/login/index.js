@@ -8,6 +8,7 @@ import {
 } from '@react-native-community/google-signin';
 import { connect } from 'react-redux';
 import { setCurrentUserInfo, createFetchSlateUser } from '../../redux/actions/authActions';
+import { styles } from './loginStyles';
 
 class LoginScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -91,16 +92,22 @@ class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>
-          LoginScreen Component
+        <Text style={styles.title}>
+          Log In
         </Text>
-
+        <Text style={styles.description}>
+          Sign in with
+        </Text>
         <GoogleSigninButton
           style={{ width: 192, height: 48 }}
           size={GoogleSigninButton.Size.Wide}
           color={GoogleSigninButton.Color.Dark}
           onPress={this._signIn}
           disabled={this.state.isLoading} />
+
+        <Text style={styles.termsText}>
+          By signing in to Slate, you agree to the Terms of Service and Privacy Policy
+        </Text>
       </View>
     );
   }
@@ -110,12 +117,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { setCurrentUserInfo, createFetchSlateUser })(LoginScreen);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#3b5de5'
-  },
-});

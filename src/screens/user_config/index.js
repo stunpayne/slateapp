@@ -27,24 +27,20 @@ class UserConfigurationScreen extends Component {
   populateForm = () => {
     let timezones = getTimeZoneList();
     let fields = {};
-    if (this.props.slateInfo.name) {
-      fields.name = this.props.slateInfo.name;
-    };
+    fields.name = this.props.slateInfo.name ? this.props.slateInfo.name : null;
+    fields.timezone = this.props.slateInfo.default_timezone ? this.props.slateInfo.default_timezone : null;
 
-    if (this.props.slateInfo.default_timezone) {
-      fields.timezone = this.props.slateInfo.default_timezone;
-    };
 
     if (this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours) {
       let wh = this.props.slateInfo.preferences.working_hours;
 
       let start = new Date();
-      start.setHours(parseInt(wh.wh_start.slice(0,2)));
-      start.setMinutes(parseInt(wh.wh_start.slice(3,5)));
+      start.setHours(parseInt(wh.wh_start.slice(0, 2)));
+      start.setMinutes(parseInt(wh.wh_start.slice(3, 5)));
 
       let end = new Date();
-      end.setHours(parseInt(wh.wh_end.slice(0,2)));
-      end.setMinutes(parseInt(wh.wh_end.slice(3,5)));
+      end.setHours(parseInt(wh.wh_end.slice(0, 2)));
+      end.setMinutes(parseInt(wh.wh_end.slice(3, 5)));
 
       fields.wh_start = start;
       fields.wh_end = end;

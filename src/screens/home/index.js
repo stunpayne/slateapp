@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { NavigationActions, StackActions } from 'react-navigation';
 
-const tabMapping = { 0: 'MyDay', 1: 'Tab2', 2: 'Tab3' };
+const tabMapping = { 0: 'My Day', 1: 'Tab2', 2: 'Tab3' };
 
 class HomeScreen extends Component {
 
@@ -15,6 +15,13 @@ class HomeScreen extends Component {
 
     return {
       title: params.currentTab ? params.currentTab : tabMapping[0],
+      headerTitleStyle:{
+        color:"#4158fb",
+        fontFamily:"Ubuntu-Medium",
+        alignSelf: 'center',
+        textAlign:"center", 
+        flex:1 
+      },
       headerRight: (
         <MenuImage
           onPress={() => {

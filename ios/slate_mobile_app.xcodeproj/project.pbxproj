@@ -37,6 +37,7 @@
 		6DB82D107534418AB19FA750 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6C4C71D9E33C44E68822CEDA /* Zocial.ttf */; };
 		12A98CD5DE974BFD8F58BA7B /* Ubuntu-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77EA48209B714F709DA7A9E8 /* Ubuntu-Regular.ttf */; };
 		18E6696360E14632824C6ED3 /* Arial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CB6BB3A21744A8ABA03BC23 /* Arial.ttf */; };
+		171E632752DE46879E06DB1A /* Ubuntu-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D6D714F75D074CFE834100E4 /* Ubuntu-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +94,7 @@
 		6C4C71D9E33C44E68822CEDA /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		77EA48209B714F709DA7A9E8 /* Ubuntu-Regular.ttf */ = {isa = PBXFileReference; name = "Ubuntu-Regular.ttf"; path = "../src/assets/fonts/Ubuntu-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		6CB6BB3A21744A8ABA03BC23 /* Arial.ttf */ = {isa = PBXFileReference; name = "Arial.ttf"; path = "../src/assets/fonts/Arial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D6D714F75D074CFE834100E4 /* Ubuntu-Medium.ttf */ = {isa = PBXFileReference; name = "Ubuntu-Medium.ttf"; path = "../src/assets/fonts/Ubuntu-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 				6C4C71D9E33C44E68822CEDA /* Zocial.ttf */,
 				77EA48209B714F709DA7A9E8 /* Ubuntu-Regular.ttf */,
 				6CB6BB3A21744A8ABA03BC23 /* Arial.ttf */,
+				D6D714F75D074CFE834100E4 /* Ubuntu-Medium.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -388,6 +391,7 @@
 				6DB82D107534418AB19FA750 /* Zocial.ttf in Resources */,
 				12A98CD5DE974BFD8F58BA7B /* Ubuntu-Regular.ttf in Resources */,
 				18E6696360E14632824C6ED3 /* Arial.ttf in Resources */,
+				171E632752DE46879E06DB1A /* Ubuntu-Medium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

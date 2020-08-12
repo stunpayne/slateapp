@@ -6,9 +6,10 @@ const styles = StyleSheet.create({
   },
   headerButtonImage: {
     justifyContent: 'center',
-    width: 25,
-    height: 25,
-    margin: 6
+    color: "#2699fb", 
+    fontSize: 20,
+    margin: 6,
+    marginRight:15
   }
 });
 

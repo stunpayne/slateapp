@@ -20,7 +20,7 @@ class MyDayScreen extends Component {
       } else {
         this.props.navigation.navigate('UserConfig');
       };
-    }, 1000);
+    }, 5000);
   };
 
   getSlateTasks = () => {

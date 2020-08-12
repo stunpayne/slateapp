@@ -17,11 +17,9 @@ const MainNavigator = createStackNavigator({
   initialRouteName: 'Splash',
   defaulfNavigationOptions: ({ navigation }) => ({
     headerTitleStyle: {
-      fontWeight: 'bold',
       textAlign: 'center',
       alignSelf: 'center',
       flex: 1,
-      fontFamily: 'FallingSkyCond'
     }
   })
 });
