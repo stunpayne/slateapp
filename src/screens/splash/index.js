@@ -11,6 +11,9 @@ import { createFetchSlateUser } from '../../redux/actions/authActions';
 import { storeData, retrieveData } from '../../config/storage';
 import { SKIP_INTRODUCTION } from '../../constants';
 import { NavigationActions, StackActions } from 'react-navigation';
+import { styles } from './splashStyles';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 class SplashScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -73,7 +76,7 @@ class SplashScreen extends Component {
     }
   };
 
-  
+
   navigateLogin = () => {
     const resetAction = StackActions.reset({
       index: 0,
@@ -83,11 +86,14 @@ class SplashScreen extends Component {
   };
   render() {
     return (
-      <View style={styles.container}>
-        <Text>
-          SplashScreen Component
-        </Text>
-      </View>
+      <LinearGradient colors={['rgba(247,51,129,1)', 'rgba(128,27,67,1)','rgba(65,88,251,1)']} style={{ flex: 1, alignSelf: "stretch" }}>
+        <View style={styles.container}>
+          <Text style={styles.logoText}>
+            Slate
+            <Text style={{color:"#f73381"}}>.</Text>
+          </Text>
+        </View>
+      </LinearGradient>
     );
   }
 }
@@ -96,12 +102,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { createFetchSlateUser })(SplashScreen);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#2cd18a'
-  },
-});
