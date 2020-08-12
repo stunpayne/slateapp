@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { storeData, retrieveData } from '../../config/storage';
 import { SKIP_INTRODUCTION } from '../../constants';
 import Swiper from 'react-native-animated-swiper';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 class IntroScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -11,9 +12,17 @@ class IntroScreen extends Component {
     }
   };
 
+  navigateLogin = () => {
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Login' })],
+    });
+    this.props.navigation.dispatch(resetAction);
+  };
+
   onSubmit = () => {
     storeData(SKIP_INTRODUCTION, "true");
-    this.props.navigation.navigate("Login");
+    this.navigateLogin();
     this.props.navigation.state.params._handleGoogleSigninConfig();
   };
 

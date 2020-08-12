@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { createFetchSlateUser } from '../../redux/actions/authActions';
 import { storeData, retrieveData } from '../../config/storage';
 import { SKIP_INTRODUCTION } from '../../constants';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 class SplashScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -53,7 +54,7 @@ class SplashScreen extends Component {
     } else {
       //alert("Please Login");
       console.log('Please Login');
-      this.props.navigation.navigate('Login');
+      this.navigateLogin();
     }
   };
 
@@ -63,7 +64,7 @@ class SplashScreen extends Component {
       // console.log('User Info --> ', userInfo);
       this.props.createFetchSlateUser(userInfo);
     } catch (error) {
-      this.props.navigation.navigate('Login');
+      this.navigateLogin();
       if (error.code === statusCodes.SIGN_IN_REQUIRED) {
         console.log('User has not signed in yet');
       } else {
@@ -72,6 +73,14 @@ class SplashScreen extends Component {
     }
   };
 
+  
+  navigateLogin = () => {
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Login' })],
+    });
+    this.props.navigation.dispatch(resetAction);
+  };
   render() {
     return (
       <View style={styles.container}>

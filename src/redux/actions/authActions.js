@@ -41,6 +41,7 @@ export function setDataLoadingStatus(status) {
   };
 };
 
+
 export const createFetchSlateUser = (userInfo) => dispatch => {
   // save user in slate db  
   let email = userInfo.user.email;
@@ -48,7 +49,7 @@ export const createFetchSlateUser = (userInfo) => dispatch => {
     .then(res => {
       if (res.status == 200 || res.status == 201) {
         dispatch(setSlateInfo(userInfo, res.data.data[0]));
-        NavigationService.navigate("Home");
+        NavigationService.navigateReset("Home");
       }
     }).catch(err => {
       if (err.response.data.error && err.response.data.error == "User not found") {
@@ -61,12 +62,12 @@ export const createFetchSlateUser = (userInfo) => dispatch => {
             if (res.status == 200 || res.status == 201) {
               storeData(SLATE_USER_CREATED, "true").then(() => {
                 dispatch(setSlateInfo(userInfo, res.data.data[0]));
-                NavigationService.navigate("Home");
+                NavigationService.navigateReset("Home");
               });
             }
           }).catch(error => {
             console.log("error in createSlateUser", error.response.data);
-            NavigationService.navigate("Login");
+            NavigationService.navigateReset("Login");
           });
       } else {
         console.log("err in fetchSlateUser", err.response.data);
@@ -99,8 +100,8 @@ export const _signOut = (data) => async dispatch => {
 
     try {
       let res = await axios.put(`${base_url}/api/user/logout`, data);
-      if (res.status == 200 || res.status == 201) {
-        NavigationService.navigate("Login");
+      if (res.status == 200 || res.status == 201) {        
+        NavigationService.navigateReset("Login");
         dispatch(logoutUser());
       };
     } catch (error) {

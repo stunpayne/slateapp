@@ -6,17 +6,20 @@ import { _signOut } from "../../../../redux/actions/authActions";
 import { fetchSlateTasks, slateTaskMarkComplete } from '../../../../redux/actions/taskActions';
 import { storeData, retrieveData } from '../../../../config/storage';
 import { FIRST_TIME_USE, TaskStatus } from '../../../../constants';
+import AddTaskModal from './add_task';
 
 class MyDayScreen extends Component {
+  state = {
+    showAddTask: false
+  };
+
   componentDidMount() {
     setTimeout(() => {
-      retrieveData(FIRST_TIME_USE).then((value) => {
-        if (!value) {
-          this.props.navigation.navigate('UserConfig');
-        } else if (value) {
-          this.getSlateTasks();
-        }
-      });
+      if (this.props.slateInfo.default_timezone && this.props.slateInfo.default_timezone.length > 0) {
+        this.getSlateTasks();
+      } else {
+        this.props.navigation.navigate('UserConfig');
+      };
     }, 1000);
   };
 
@@ -26,7 +29,7 @@ class MyDayScreen extends Component {
   };
 
   onPressMarkComplete = (taskId) => {
-    this.setState({selected:taskId});
+    this.setState({ selected: taskId });
     let data = { user_id: this.props.slateInfo.id, id: taskId };
     this.props.slateTaskMarkComplete(data);
   }
@@ -37,8 +40,13 @@ class MyDayScreen extends Component {
   };
 
   onPressAddTask = () => {
-    this.props.navigation.navigate('AddTask', { getSlateTasks: this.getSlateTasks });
+    // this.props.navigation.navigate('AddTask', { getSlateTasks: this.getSlateTasks });
+    this.setState({ showAddTask: true });
   };
+
+  closeAddTask = () => {
+    this.setState({ showAddTask: false });
+  }
 
   onPressUserConfig = () => {
     this.props.navigation.navigate('UserConfig');
@@ -145,6 +153,18 @@ class MyDayScreen extends Component {
           >
             <Text>Logout</Text>
           </TouchableOpacity>
+
+
+          <React.Fragment>
+            {this.state.showAddTask && (
+              <AddTaskModal
+                isModalVisible={this.state.showAddTask}
+                closeModal={this.closeAddTask}
+                getSlateTasks={this.getSlateTasks}
+              />
+            )}
+          </React.Fragment>
+
         </View>
       </ScrollView >
     );
@@ -164,7 +184,7 @@ export default connect(mapStateToProps, { _signOut, fetchSlateTasks, slateTaskMa
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
   },
   header: {
     marginTop: 100,

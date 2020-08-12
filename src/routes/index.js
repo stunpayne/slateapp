@@ -4,7 +4,6 @@ import SplashScreen from '../screens/splash';
 import HomeScreen from "../screens/home";
 import LoginScreen from '../screens/login';
 import IntroScreen from '../screens/intro';
-import AddTaskScreen from '../screens/add_task';
 import UserConfigurationScreen from '../screens/user_config';
 // import DrawerContainer from '../screens/drawer/index.js';
 
@@ -13,7 +12,6 @@ const MainNavigator = createStackNavigator({
   Login: LoginScreen,
   Home: HomeScreen,
   Intro: IntroScreen,
-  AddTask: AddTaskScreen,
   UserConfig: UserConfigurationScreen,
 }, {
   initialRouteName: 'Splash',
