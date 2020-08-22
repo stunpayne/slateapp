@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 import { SIGNIN_SCOPE1, SIGNIN_SCOPE2, WEB_CLIENT_ID } from 'react-native-dotenv';
 import {
   GoogleSignin,
@@ -13,6 +13,7 @@ import { SKIP_INTRODUCTION } from '../../constants';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { styles } from './splashStyles';
 import LinearGradient from 'react-native-linear-gradient';
+import { Images } from '../../theme';
 
 
 class SplashScreen extends Component {
@@ -86,12 +87,18 @@ class SplashScreen extends Component {
   };
   render() {
     return (
-      <LinearGradient colors={['rgba(247,51,129,1)', 'rgba(128,27,67,1)','rgba(65,88,251,1)']} style={{ flex: 1, alignSelf: "stretch" }}>
+      <LinearGradient colors={['rgba(247,51,129,1)', 'rgba(128,27,67,1)', 'rgba(65,88,251,1)']} style={{ flex: 1, alignSelf: "stretch" }}>
         <View style={styles.container}>
-          <Text style={styles.logoText}>
-            Slate
-            <Text style={{color:"#f73381"}}>.</Text>
-          </Text>
+          <View style={{flexDirection: 'row',justifyContent: 'center',alignItems:"center"}}>
+            <Image
+              style={styles.logo}
+              source={Images.slate_icon_light}
+            />
+            <Text style={styles.logoText}>
+              Slate
+            <Text style={{ color: "#f73381" }}>.</Text>
+            </Text>
+          </View>
         </View>
       </LinearGradient>
     );

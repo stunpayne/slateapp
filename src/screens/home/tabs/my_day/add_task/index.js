@@ -10,6 +10,7 @@ import { googleApiClient } from '../../../../../services/GoogleApiService';
 import { isValidDate, checkEndValid, extractDateTime, fetchDndSlots } from './helper';
 import { createSlots } from '../../../../../services/SlotterService';
 import { CALENDAR_BASE_URL, SLOT_TYPE_FREE } from '../../../../../constants';
+import { styles } from "./addtaskStyles";
 
 class AddTaskModal extends Component {
   state = {
@@ -44,6 +45,11 @@ class AddTaskModal extends Component {
     if (!fields['eventName']) {
       formIsValid = false;
       errors['eventName'] = "EventName is required";
+    }
+
+    if (!fields['eventDescription']) {
+      formIsValid = false;
+      errors['eventDescription'] = "eventDescription is required";
     }
 
     if (!fields['endDate']) {
@@ -116,7 +122,7 @@ class AddTaskModal extends Component {
 
   onSubmit = async () => {
     if (this.validateForm()) {
-      const { duration, endDate, endTime, eventName } = this.state.fields;
+      const { duration, endDate, endTime, eventName, eventDescription } = this.state.fields;
       let deadline_ts = extractDateTime(endDate, endTime); //get deadline timestamp
       let isDeadlineValid = checkEndValid(moment().toISOString(), deadline_ts) //checking if deadline_ts > now
       if (isDeadlineValid) {
@@ -158,6 +164,7 @@ class AddTaskModal extends Component {
                   let slateTask = {
                     user_id: this.props.slateInfo.id,
                     title: eventName,
+                    description: eventDescription,
                     deadline: deadline_ts,
                     duration: duration,
                     category: "default",
@@ -168,8 +175,8 @@ class AddTaskModal extends Component {
                   this.props.addSlateTask(slateTask).then(res => {
                     if (res.status == 200 || res.status == 201) {
                       Alert.alert("Success!", "Event scheduled successfully",
-                        [                          
-                          { text: 'Okay', onPress: () => {this.props.closeModal()} }
+                        [
+                          { text: 'Okay', onPress: () => { this.props.closeModal() } }
                         ]
                       );
                       this.setState({ dataLoading: false });
@@ -231,11 +238,11 @@ class AddTaskModal extends Component {
         </View>
 
         <View>
-          <Form style={{minWidth:250}}>
+          <Form style={{ minWidth: 250 }}>
             {/* Event name */}
             <Item floatingLabel>
               <Label>
-                Enter Event Name {RED_ASTERISK}
+                Task Title... {RED_ASTERISK}
               </Label>
               <Input
                 value={fields.eventName}
@@ -245,6 +252,22 @@ class AddTaskModal extends Component {
             {errors.eventName && errors.eventName.length ? (
               <Text style={styles.errorTextStyle}>
                 {errors.eventName}
+              </Text>
+            ) : null}
+
+            {/* Event description */}
+            <Item floatingLabel>
+              <Label>
+                Task Details... {RED_ASTERISK}
+              </Label>
+              <Input
+                value={fields.eventDescription}
+                onChangeText={value => this.handleChange('eventDescription', value)}
+              />
+            </Item>
+            {errors.eventDescription && errors.eventDescription.length ? (
+              <Text style={styles.errorTextStyle}>
+                {errors.eventDescription}
               </Text>
             ) : null}
 
@@ -325,26 +348,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { addCalendarEvent, addSlateTask })(AddTaskModal);
-
-const styles = StyleSheet.create({
-  modalTitle: { backgroundColor: "#f73381", borderRadius: 18, paddingHorizontal: 10, paddingVertical: 5 },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#ef6b91",
-    padding: 10,
-    margin: 20
-  },
-  errorTextStyle: {
-    color: "#ff0000",
-    marginLeft: 10,
-  },
-  closeButton: {
-    backgroundColor: "#ffffff",
-    elevation: 0,
-    height: 36,
-    width: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-});

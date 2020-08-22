@@ -10,6 +10,11 @@ export const styles = StyleSheet.create({
     fontFamily:"Ubuntu-Regular",
     fontSize:80,
     fontWeight:"bold",
-    color:"#ffffff"
+    color:"#ffffff",
   },
+  logo:{
+    width: 70,
+    height: 70,
+    marginBottom:10
+  }
 });

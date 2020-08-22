@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   title:{
     fontFamily:"Ubuntu-Regular",
     fontSize:20,
-    marginBottom:200
+    marginBottom:100
   },
   description:{
     fontFamily:"Ubuntu-Regular",
@@ -24,5 +24,10 @@ export const styles = StyleSheet.create({
     textAlign:"center",
     paddingHorizontal:70,
     marginTop:30
+  },
+  logo:{
+    width: 100,
+    height: 100,
+    marginBottom:10
   }
 });

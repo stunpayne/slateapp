@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 import { SIGNIN_SCOPE1, SIGNIN_SCOPE2, WEB_CLIENT_ID } from 'react-native-dotenv';
 import {
   GoogleSignin,
@@ -9,6 +9,7 @@ import {
 import { connect } from 'react-redux';
 import { setCurrentUserInfo, createFetchSlateUser } from '../../redux/actions/authActions';
 import { styles } from './loginStyles';
+import { Images } from '../../theme'
 
 class LoginScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -20,7 +21,6 @@ class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      gettingLoginStatus: true,
       isLoading: false
     };
   };
@@ -47,7 +47,7 @@ class LoginScreen extends Component {
       //alert("Please Login");
       console.log('Please Login');
     }
-    this.setState({ gettingLoginStatus: false });
+    this.setState({ isLoading: false });
   };
 
   _getCurrentUserInfo = async () => {
@@ -95,6 +95,10 @@ class LoginScreen extends Component {
         <Text style={styles.title}>
           Log In
         </Text>
+        <Image
+          style={styles.logo}
+          source={Images.slate_icon_dark}
+        />
         <Text style={styles.description}>
           Sign in with
         </Text>
@@ -103,7 +107,8 @@ class LoginScreen extends Component {
           size={GoogleSigninButton.Size.Wide}
           color={GoogleSigninButton.Color.Dark}
           onPress={this._signIn}
-          disabled={this.state.isLoading} />
+          disabled={this.state.isLoading && this.props.isLoading}
+        />
 
         <Text style={styles.termsText}>
           By signing in to Slate, you agree to the Terms of Service and Privacy Policy
@@ -114,6 +119,7 @@ class LoginScreen extends Component {
 };
 
 const mapStateToProps = state => ({
+  isLoading: state.auth.isLoading
 });
 
 export default connect(mapStateToProps, { setCurrentUserInfo, createFetchSlateUser })(LoginScreen);

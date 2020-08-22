@@ -45,6 +45,7 @@ export function setDataLoadingStatus(status) {
 export const createFetchSlateUser = (userInfo) => dispatch => {
   // save user in slate db  
   let email = userInfo.user.email;
+  dispatch(setDataLoadingStatus(true));
   axios.get(`${base_url}/api/user/get/email/${email}`)
     .then(res => {
       if (res.status == 200 || res.status == 201) {
@@ -68,9 +69,11 @@ export const createFetchSlateUser = (userInfo) => dispatch => {
           }).catch(error => {
             console.log("error in createSlateUser", error.response.data);
             NavigationService.navigateReset("Login");
+            dispatch(setDataLoadingStatus(false));
           });
       } else {
         console.log("err in fetchSlateUser", err.response.data);
+        dispatch(setDataLoadingStatus(false));
       }
     });
 };

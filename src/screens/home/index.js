@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import MyDayScreen from "./tabs/my_day";
+import CalendarScreen from "./tabs/calendar";
+import AnalyticsScreen from "./tabs/analytics";
 import { Container, Tab, Tabs } from 'native-base';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { NavigationActions, StackActions } from 'react-navigation';
 
-const tabMapping = { 0: 'My Day', 1: 'Tab2', 2: 'Tab3' };
+const tabMapping = { 0: 'My Day', 1: 'Calendar', 2: 'Analytics' };
 
 class HomeScreen extends Component {
 
@@ -56,11 +58,11 @@ class HomeScreen extends Component {
     this.props.navigation.dispatch(resetAction);
   };
 
-  render_dummy = (title) => {
-    return (
-      <View><Text>{title}</Text></View>
-    )
-  };
+  // render_dummy = (title) => {
+  //   return (
+  //     <View><Text>{title}</Text></View>
+  //   )
+  // };
 
   handleTabChange(i) {
     this.props.navigation.setParams({
@@ -74,11 +76,11 @@ class HomeScreen extends Component {
         <Tab heading="MyDay" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
           <MyDayScreen navigation={this.props.navigation} />
         </Tab>
-        <Tab heading="Tab2" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
-          {this.render_dummy("Tab2")}
+        <Tab heading="Calendar" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+          <CalendarScreen />
         </Tab>
-        <Tab heading="Tab3" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
-          {this.render_dummy("Tab3")}
+        <Tab heading="Analytics" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+          <AnalyticsScreen />
         </Tab>
       </Tabs>
     );

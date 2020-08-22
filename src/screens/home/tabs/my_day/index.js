@@ -1,15 +1,45 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, StatusBar, TouchableOpacity, Dimensions, Image, ActivityIndicator } from "react-native";
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { _signOut } from "../../../../redux/actions/authActions";
+import { Images } from '../../../../theme';
 import { fetchSlateTasks, slateTaskMarkComplete } from '../../../../redux/actions/taskActions';
-import { storeData, retrieveData } from '../../../../config/storage';
-import { FIRST_TIME_USE, TaskStatus } from '../../../../constants';
 import AddTaskModal from './add_task';
+import TaskDetailsModal from './task_details';
+import { FIRST_TIME_USE, TaskStatus } from '../../../../constants';
+const windowHeight = Dimensions.get('window').height;
+import { styles } from './mydayStyles';
+
+const Item = ({ item, onPress }) => (
+  <View style={styles.item}>
+    <View style={styles.circleView}>
+      <View style={styles.circle}></View>
+    </View>
+    <TouchableOpacity onPress={onPress} style={styles.itemMain}>
+      <View style={styles.itemMainView}>
+        <Image
+          style={styles.logo}
+          source={Images.slate_icon_dark}
+        />
+        <View style={styles.itemDescription}>
+          <Text style={styles.title}>{item.title}</Text>
+          <View>
+            {item.description ? <Text style={styles.description}>{item.description}</Text> : null}
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.time}>{moment(item.start).format('HH:mm')}-{moment(item.end).format('HH:mm')}</Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  </View>
+);
+
 
 class MyDayScreen extends Component {
   state = {
+    selectedTask: null,
+    showTaskDetails: false,
     showAddTask: false
   };
 
@@ -28,19 +58,7 @@ class MyDayScreen extends Component {
     this.props.fetchSlateTasks(data);
   };
 
-  onPressMarkComplete = (taskId) => {
-    this.setState({ selected: taskId });
-    let data = { user_id: this.props.slateInfo.id, id: taskId };
-    this.props.slateTaskMarkComplete(data);
-  }
-
-  revokeAccess = () => {
-    let data = { id: this.props.slateInfo.id };
-    this.props._signOut(data);
-  };
-
   onPressAddTask = () => {
-    // this.props.navigation.navigate('AddTask', { getSlateTasks: this.getSlateTasks });
     this.setState({ showAddTask: true });
   };
 
@@ -48,125 +66,101 @@ class MyDayScreen extends Component {
     this.setState({ showAddTask: false });
   }
 
-  onPressUserConfig = () => {
-    this.props.navigation.navigate('UserConfig');
-  }
-
-  renderTasksList = (tasks) => {
-    return tasks.map((item) => {
-      return (
-        <View style={styles.eventItem}>
-          <Text>
-            {item.title}
-          </Text>
-          <Text>
-            Status : {item.status}
-          </Text>
-          <Text>
-            Duration: {item.duration}
-          </Text>
-          <Text>
-            Deadline: {moment(item.deadline).format('lll')}
-          </Text>
-
-          {
-            item.start ?
-              <React.Fragment>
-                <Text>
-                  Start: {moment(item.start).format('lll')}
-                </Text>
-              </React.Fragment> : null
-          }
-
-          {
-            item.end ?
-              <React.Fragment>
-                <Text>
-                  End: {moment(item.end).format('lll')}
-                </Text>
-              </React.Fragment> : null
-          }
-
-          {
-            item.status == TaskStatus.SCHEDULED ?
-              <React.Fragment>
-                <TouchableOpacity style={styles.completeButton} onPress={() => this.onPressMarkComplete(item.id)}>
-                  <Text>Complete</Text>
-                  {this.state.selected == item.id && this.props.isUpdating ? <ActivityIndicator size="large" color="white" /> : null}
-                </TouchableOpacity>
-              </React.Fragment>
-              : null
-          }
-        </View>
-      );
-    });
+  openTaskDetails = (task) => {
+    this.setState({ showTaskDetails: true, selectedTask: task });
   };
 
+  closeTaskDetails = () => {
+    this.setState({ showTaskDetails: false, selectedTask: null });
+  };
+
+  renderItem = ({ item }) => {
+    const { selectedTask } = this.state;
+    return (
+      <Item
+        item={item}
+        onPress={() => this.openTaskDetails(item)}
+      />
+    );
+  };
+
+  renderBottomTaskContaniner = () => {
+    return (
+      <View>
+        <Text>NO PENDING TASKS FOR THE DAY</Text>
+      </View>
+    )
+  }
+
+  renderScreen = (DATA, selectedId) => {
+    if (DATA && DATA.length > 0) {
+      return (
+        <React.Fragment>
+          <View style={{ flexDirection: 'row' }}>
+            <View
+              style={{
+                height: windowHeight,
+                width: 6,
+                backgroundColor: "#4158fb",
+                marginRight: -13,
+                marginLeft: 15
+              }}
+            />
+            <FlatList
+              data={DATA}
+              renderItem={this.renderItem}
+              keyExtractor={(item) => item.id}
+              extraData={selectedId}
+            />
+          </View>
+          {this.renderBottomTaskContaniner()}
+        </React.Fragment>
+      )
+    } else {
+      return (
+        this.renderBottomTaskContaniner()
+      )
+    }
+  }
 
   render() {
-    const userInfo = this.props.userInfo;
+    const { selectedId } = this.state;
     const { isLoading, tasks } = this.props;
-    console.log("tasks", tasks);
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={{ fontSize: 23 }}>Welcome:{userInfo && userInfo.user ? userInfo.user.name : ""}</Text>
-        </View>
+      <SafeAreaView style={styles.container}>
 
-        <View style={styles.eventsList}>
-          {tasks.length > 0 ? this.renderTasksList(tasks) : <Text>No Slate Tasks</Text>}
-        </View>
+        {
+          this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours ?
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.onPressAddTask}
+            >
+              <Text>AddTask</Text>
+            </TouchableOpacity> : null
+        }
 
-        <View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => this.getSlateTasks()}
-          >
-            <View>
-              <Text>Fetch Slate Tasks</Text>
-              {isLoading ? <ActivityIndicator size="large" color="white" /> : null}
-            </View>
-          </TouchableOpacity>
+        {this.renderScreen(tasks, selectedId)}
 
+        <React.Fragment>
+          {this.state.showAddTask && (
+            <AddTaskModal
+              isModalVisible={this.state.showAddTask}
+              closeModal={this.closeAddTask}
+              getSlateTasks={this.getSlateTasks}
+            />
+          )}
+        </React.Fragment>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.onPressUserConfig}
-          >
-            <Text>UserConfig</Text>
-          </TouchableOpacity>
-
-          {
-            this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours ?
-              <TouchableOpacity
-                style={styles.button}
-                onPress={this.onPressAddTask}
-              >
-                <Text>AddTask</Text>
-              </TouchableOpacity> : null
-          }
-
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.revokeAccess}
-          >
-            <Text>Logout</Text>
-          </TouchableOpacity>
-
-
-          <React.Fragment>
-            {this.state.showAddTask && (
-              <AddTaskModal
-                isModalVisible={this.state.showAddTask}
-                closeModal={this.closeAddTask}
-                getSlateTasks={this.getSlateTasks}
-              />
-            )}
-          </React.Fragment>
-
-        </View>
-      </ScrollView >
+        <React.Fragment>
+          {this.state.showTaskDetails && (
+            <TaskDetailsModal
+              isModalVisible={this.state.showTaskDetails}
+              closeModal={this.closeTaskDetails}
+              task={this.state.selectedTask}
+            />
+          )}
+        </React.Fragment>
+      </SafeAreaView>
     );
   }
 }
@@ -180,47 +174,4 @@ const mapStateToProps = state => ({
   isUpdating: state.task.isUpdating,
 });
 
-export default connect(mapStateToProps, { _signOut, fetchSlateTasks, slateTaskMarkComplete })(MyDayScreen);
-
-const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-  },
-  header: {
-    marginTop: 100,
-    alignSelf: "center"
-  },
-  center: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  eventsList: {
-    alignItems: 'center',
-    margin: 10
-  },
-  eventItem: {
-    padding: 10,
-    backgroundColor: "#20d3d6",
-    margin: 5
-  },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#ef6b91",
-    padding: 10,
-    margin: 20
-  },
-  completeButton: {
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#ef6b91",
-    marginTop: 20
-  },
-  image: {
-    marginTop: 15,
-    width: 150,
-    height: 150,
-    borderColor: "rgba(0,0,0,0.2)",
-    borderWidth: 3,
-    borderRadius: 150
-  },
-});
+export default connect(mapStateToProps, { fetchSlateTasks, slateTaskMarkComplete })(MyDayScreen);
