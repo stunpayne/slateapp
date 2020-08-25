@@ -5,7 +5,7 @@ import HomeScreen from "../screens/home";
 import LoginScreen from '../screens/login';
 import IntroScreen from '../screens/intro';
 import UserConfigurationScreen from '../screens/user_config';
-// import DrawerContainer from '../screens/drawer/index.js';
+import DrawerContainer from '../screens/drawer/index.js';
 
 const MainNavigator = createStackNavigator({
   Splash: SplashScreen,
@@ -25,17 +25,19 @@ const MainNavigator = createStackNavigator({
 });
 
 
-// const DrawerStack = createDrawerNavigator(
-//   {
-//     Main: MainNavigator
-//   },
-//   {
-//     drawerPosition: 'left',
-//     initialRouteName: 'Main',
-//     drawerWidth: 250,
-//     contentComponent: DrawerContainer
-//   }
-// );
+const DrawerStack = createDrawerNavigator(
+  {
+    Main: MainNavigator
+  },
+  {
+    drawerPosition: 'right',
+    initialRouteName: 'Main',
+    drawerWidth: 300,
+    contentComponent: DrawerContainer
+  }
+);
 
 
-export default createAppContainer(MainNavigator);
+export default AppContainer = createAppContainer(DrawerStack);
+
+// export default createAppContainer(MainNavigator);

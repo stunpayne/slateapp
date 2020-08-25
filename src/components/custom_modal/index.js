@@ -13,7 +13,7 @@ import {
 
 export default class CustomModal extends React.Component {
   render() {
-    const { isModalVisible, closeModal, children } = this.props;
+    const { isModalVisible, closeModal, children, modalStyle } = this.props;
     return (
       <Modal
         animationType="fade"
@@ -22,7 +22,7 @@ export default class CustomModal extends React.Component {
         onRequestClose={() => closeModal()}
       >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View style={[styles.modalView, modalStyle]}>
             {children}
           </View>
         </View>

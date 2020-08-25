@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   },
   headerButtonImage: {
     justifyContent: 'center',
-    color: "#2699fb", 
+    color: "#4158fb", 
     fontSize: 20,
     margin: 6,
     marginRight:15

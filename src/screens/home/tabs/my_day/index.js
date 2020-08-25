@@ -130,7 +130,7 @@ class MyDayScreen extends Component {
       <SafeAreaView style={styles.container}>
 
         {
-          this.props.slateInfo.preferences && this.props.slateInfo.preferences.working_hours ?
+          this.props.slateInfo.preferences ?
             <TouchableOpacity
               style={styles.button}
               onPress={this.onPressAddTask}

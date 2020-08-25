@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import MyDayScreen from "./tabs/my_day";
 import CalendarScreen from "./tabs/calendar";
 import AnalyticsScreen from "./tabs/analytics";
-import { Container, Tab, Tabs } from 'native-base';
+import { Container, Tab, Tabs, TabHeading } from 'native-base';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { NavigationActions, StackActions } from 'react-navigation';
+import { Images } from '../../theme';
 
-const tabMapping = { 0: 'My Day', 1: 'Calendar', 2: 'Analytics' };
+const tabMapping = { 0: 'MY DAY', 1: 'CALENDAR', 2: 'MY PROGRESS' };
 
 class HomeScreen extends Component {
 
@@ -17,18 +18,18 @@ class HomeScreen extends Component {
 
     return {
       title: params.currentTab ? params.currentTab : tabMapping[0],
-      headerTitleStyle:{
-        color:"#4158fb",
-        fontFamily:"Ubuntu-Medium",
+      headerTitleStyle: {
+        color: "#4158fb",
+        fontFamily: "Ubuntu-Medium",
         alignSelf: 'center',
-        textAlign:"center", 
-        flex:1 
+        textAlign: "center",
+        flex: 1
       },
       headerRight: (
         <MenuImage
           onPress={() => {
             console.log("menu image pressed");
-            // navigation.openDrawer();
+            navigation.openDrawer();
           }}
         />
       )
@@ -71,15 +72,35 @@ class HomeScreen extends Component {
   }
 
   renderTabs = () => {
+    const { params } = this.props.navigation.state;
     return (
-      <Tabs tabBarPosition="bottom" onChangeTab={({ i }) => this.handleTabChange(i)} tabBarUnderlineStyle={{ height: 0 }}>
-        <Tab heading="MyDay" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+      <Tabs
+        tabBarPosition="bottom"
+        onChangeTab={({ i }) => this.handleTabChange(i)}
+        tabBarUnderlineStyle={{ height: 0 }}
+      >
+        <Tab
+          heading={<TabHeading style={params.currentTab == tabMapping[0] ? styles.activeTabStyle : styles.tabStyle}><View><Image source={Images.home} style={styles.tabIcon} /></View></TabHeading>}
+          tabStyle={styles.tabStyle}
+          activeTabStyle={styles.activeTabStyle}
+          activeTextStyle={styles.activeTextStyle}
+        >
           <MyDayScreen navigation={this.props.navigation} />
         </Tab>
-        <Tab heading="Calendar" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+        <Tab
+          heading={<TabHeading style={params.currentTab == tabMapping[1] ? styles.activeTabStyle : styles.tabStyle}><View><Image source={Images.calendar} style={styles.tabIcon} /></View></TabHeading>}
+          tabStyle={styles.tabStyle}
+          activeTabStyle={styles.activeTabStyle}
+          activeTextStyle={styles.activeTextStyle}
+        >
           <CalendarScreen />
         </Tab>
-        <Tab heading="Analytics" tabStyle={styles.tabStyle} activeTabStyle={styles.activeTabStyle} activeTextStyle={styles.activeTextStyle}>
+        <Tab
+          heading={<TabHeading style={params.currentTab == tabMapping[2] ? styles.activeTabStyle : styles.tabStyle}><Image source={Images.clock} style={styles.tabIcon} /></TabHeading>}
+          tabStyle={styles.tabStyle}
+          activeTabStyle={styles.activeTabStyle}
+          activeTextStyle={styles.activeTextStyle}
+        >
           <AnalyticsScreen />
         </Tab>
       </Tabs>
@@ -109,9 +130,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   activeTabStyle: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#4158fb",
   },
-  activeTextStyle: {
-    color: "#4158fb",
+  tabIcon: {
+    height: 30,
+    width: 30
   }
-})
+});
