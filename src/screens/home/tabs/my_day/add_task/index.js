@@ -47,11 +47,6 @@ class AddTaskModal extends Component {
       errors['eventName'] = "EventName is required";
     }
 
-    if (!fields['eventDescription']) {
-      formIsValid = false;
-      errors['eventDescription'] = "eventDescription is required";
-    }
-
     if (!fields['endDate']) {
       formIsValid = false;
       errors['endDate'] = "Deadline date is required";
@@ -122,7 +117,8 @@ class AddTaskModal extends Component {
 
   onSubmit = async () => {
     if (this.validateForm()) {
-      const { duration, endDate, endTime, eventName, eventDescription } = this.state.fields;
+      const { duration, endDate, endTime, eventName } = this.state.fields;
+      const eventDescription = this.state.fields.eventDescription ? this.state.fields.eventDescription : ""
       let deadline_ts = extractDateTime(endDate, endTime); //get deadline timestamp
       let isDeadlineValid = checkEndValid(moment().toISOString(), deadline_ts) //checking if deadline_ts > now
       if (isDeadlineValid) {
@@ -258,7 +254,7 @@ class AddTaskModal extends Component {
             {/* Event description */}
             <Item floatingLabel>
               <Label>
-                Task Details... {RED_ASTERISK}
+                Task Details...
               </Label>
               <Input
                 value={fields.eventDescription}

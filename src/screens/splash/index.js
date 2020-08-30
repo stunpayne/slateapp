@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, ActivityIndicator } from 'react-native';
 import { SIGNIN_SCOPE1, SIGNIN_SCOPE2, WEB_CLIENT_ID } from 'react-native-dotenv';
 import {
   GoogleSignin,
@@ -34,7 +34,7 @@ class SplashScreen extends Component {
           this._handleGoogleSigninConfig();
         }
       });
-    }, 5000);
+    }, 2000);
   };
 
   _handleGoogleSigninConfig() {
@@ -89,16 +89,23 @@ class SplashScreen extends Component {
     return (
       <LinearGradient colors={['rgba(247,51,129,1)', 'rgba(128,27,67,1)', 'rgba(65,88,251,1)']} style={{ flex: 1, alignSelf: "stretch" }}>
         <View style={styles.container}>
-          <View style={{flexDirection: 'row',justifyContent: 'center',alignItems:"center"}}>
-            <Image
+          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: "center" }}>
+            {/* <Image
               style={styles.logo}
               source={Images.slate_icon_light}
             />
             <Text style={styles.logoText}>
               Slate
             <Text style={{ color: "#f73381" }}>.</Text>
-            </Text>
+            </Text> */}
+            <Image
+              style={styles.slate_logo}
+              source={Images.slate_logo}
+            />
           </View>
+          {/* <View>
+            <ActivityIndicator size="small" />
+          </View> */}
         </View>
       </LinearGradient>
     );

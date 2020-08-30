@@ -12,9 +12,14 @@ export const styles = StyleSheet.create({
     fontWeight:"bold",
     color:"#ffffff",
   },
-  logo:{
-    width: 70,
-    height: 70,
+  // logo:{
+  //   width: 70,
+  //   height: 70,
+  //   marginBottom:10
+  // },
+  slate_logo:{
+    width: 300,
+    height: 80,
     marginBottom:10
   }
 });

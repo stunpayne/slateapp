@@ -9,6 +9,8 @@ import TaskDetailsModal from './task_details';
 import { FIRST_TIME_USE, TaskStatus } from '../../../../constants';
 const windowHeight = Dimensions.get('window').height;
 import { styles } from './mydayStyles';
+import NavigationService from '../../../../services/NavigationService';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Item = ({ item, onPress }) => (
   <View style={styles.item}>
@@ -44,13 +46,7 @@ class MyDayScreen extends Component {
   };
 
   componentDidMount() {
-    setTimeout(() => {
-      if (this.props.slateInfo.default_timezone && this.props.slateInfo.default_timezone.length > 0) {
-        this.getSlateTasks();
-      } else {
-        this.props.navigation.navigate('UserConfig');
-      };
-    }, 5000);
+    this.getSlateTasks();
   };
 
   getSlateTasks = () => {
@@ -61,6 +57,10 @@ class MyDayScreen extends Component {
   onPressAddTask = () => {
     this.setState({ showAddTask: true });
   };
+
+  onPressUserConfig = () => {
+    NavigationService.navigate("UserConfig");
+  }
 
   closeAddTask = () => {
     this.setState({ showAddTask: false });
@@ -74,26 +74,86 @@ class MyDayScreen extends Component {
     this.setState({ showTaskDetails: false, selectedTask: null });
   };
 
-  renderItem = ({ item }) => {
-    const { selectedTask } = this.state;
+  renderItem = (item, i) => {
     return (
       <Item
+        key={i}
         item={item}
         onPress={() => this.openTaskDetails(item)}
       />
     );
   };
 
-  renderBottomTaskContaniner = () => {
+  AddTaskContainer = () => {
     return (
-      <View>
-        <Text>NO PENDING TASKS FOR THE DAY</Text>
+      <View style={styles.item}>
+        <View style={styles.circleView}>
+        </View>
+        <View style={styles.itemMain}>
+          <View style={{ minHeight: 100 }}>
+            <View style={styles.hbar}></View>
+            <Text style={styles.addTaskMessage}>NO PENDING TASKS FOR THE DAY</Text>
+            <TouchableOpacity onPress={this.onPressAddTask} style={{ alignSelf: "flex-end", borderRadius: 25, elevation: 3 }}>
+              <Image style={styles.addTaskImage} source={Images.add_task_icon_light} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     )
   }
 
+  AddPreferenceContainer = () => {
+    return (
+      <View style={styles.item}>
+        <View style={styles.circleView}>
+        </View>
+        <View style={styles.itemMain}>
+          <View style={{ minHeight: 100 }}>
+            <View style={styles.hbar}></View>
+            <Text style={styles.addTaskMessage}>Fill your preferences to be able to add your tasks</Text>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.onPressUserConfig}
+            >
+              <Text>User Config</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   renderScreen = (DATA, selectedId) => {
     if (DATA && DATA.length > 0) {
+      return (
+        <React.Fragment>
+
+          <View style={{ flexDirection: 'row' }}>
+            <View
+              style={{
+                height: windowHeight,
+                width: 6,
+                backgroundColor: "#4158fb",
+                marginRight: -13,
+                marginLeft: 15
+              }}
+            />
+            <View style={{ flexDirection: 'column', marginTop: 20 }}>
+              <ScrollView style={{maxHeight: windowHeight-300}} >
+                {DATA.map((item, i) => {
+                  return (this.renderItem(item, i))
+                })}
+              </ScrollView>
+              {
+                this.props.slateInfo.preferences ?
+                  this.AddTaskContainer() : null
+              }
+            </View>
+          </View>
+        </React.Fragment>
+      )
+    } else {
       return (
         <React.Fragment>
           <View style={{ flexDirection: 'row' }}>
@@ -106,19 +166,14 @@ class MyDayScreen extends Component {
                 marginLeft: 15
               }}
             />
-            <FlatList
-              data={DATA}
-              renderItem={this.renderItem}
-              keyExtractor={(item) => item.id}
-              extraData={selectedId}
-            />
+            <View style={{ flexDirection: 'column', marginTop: 20 }}>
+              {
+                this.props.slateInfo.preferences ?
+                  this.AddTaskContainer() : this.AddPreferenceContainer()
+              }
+            </View>
           </View>
-          {this.renderBottomTaskContaniner()}
         </React.Fragment>
-      )
-    } else {
-      return (
-        this.renderBottomTaskContaniner()
       )
     }
   }
@@ -128,17 +183,6 @@ class MyDayScreen extends Component {
     const { isLoading, tasks } = this.props;
     return (
       <SafeAreaView style={styles.container}>
-
-        {
-          this.props.slateInfo.preferences ?
-            <TouchableOpacity
-              style={styles.button}
-              onPress={this.onPressAddTask}
-            >
-              <Text>AddTask</Text>
-            </TouchableOpacity> : null
-        }
-
         {this.renderScreen(tasks, selectedId)}
 
         <React.Fragment>

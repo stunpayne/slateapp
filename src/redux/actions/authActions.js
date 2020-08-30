@@ -5,6 +5,7 @@ import { base_url } from '../../config/urls';
 import { storeData, retrieveData } from '../../config/storage';
 import NavigationService from '../../services/NavigationService';
 import { SLATE_USER_CREATED, FIRST_TIME_USE } from '../../constants';
+import { Alert } from "react-native"
 
 export function setCurrentUserInfo(info, tokens) {
   return {
@@ -27,7 +28,7 @@ export function setSlateInfo(userInfo, slateInfo) {
   };
 };
 
-export function setUpdatedSlateInfo(slateInfo){
+export function setUpdatedSlateInfo(slateInfo) {
   return {
     type: SET_SLATE_UPDATED_USER,
     slateInfo: slateInfo
@@ -50,7 +51,11 @@ export const createFetchSlateUser = (userInfo) => dispatch => {
     .then(res => {
       if (res.status == 200 || res.status == 201) {
         dispatch(setSlateInfo(userInfo, res.data.data[0]));
-        NavigationService.navigateReset("Home");
+        if (res.data.data[0].preferences) {
+          NavigationService.navigateReset("Home");
+        } else {
+          NavigationService.navigateReset("UserConfig");
+        }
       }
     }).catch(err => {
       if (err.response.data.error && err.response.data.error == "User not found") {
@@ -58,12 +63,13 @@ export const createFetchSlateUser = (userInfo) => dispatch => {
           email: userInfo.user.email,
           name: userInfo.user.name
         };
+        console.log("lest", data);
         axios.post(`${base_url}/api/user/create`, data)
           .then(res => {
             if (res.status == 200 || res.status == 201) {
               storeData(SLATE_USER_CREATED, "true").then(() => {
-                dispatch(setSlateInfo(userInfo, res.data.data[0]));
-                NavigationService.navigateReset("Home");
+                dispatch(setSlateInfo(userInfo, res.data.data));
+                NavigationService.navigateReset("UserConfig");
               });
             }
           }).catch(error => {
@@ -86,6 +92,12 @@ export const updateSlateUser = (data) => dispatch => {
       if (res.status == 200 || res.status == 201) {
         dispatch(setUpdatedSlateInfo(res.data.data));
         storeData(FIRST_TIME_USE, "false");
+
+        Alert.alert("Success!", "User preferences saved successfully",
+          [
+            { text: 'Okay', onPress: () => { NavigationService.navigateReset("Home") } }
+          ]
+        );
       }
     }).catch(error => {
       dispatch(setDataLoadingStatus(false));
@@ -103,7 +115,7 @@ export const _signOut = (data) => async dispatch => {
 
     try {
       let res = await axios.put(`${base_url}/api/user/logout`, data);
-      if (res.status == 200 || res.status == 201) {        
+      if (res.status == 200 || res.status == 201) {
         NavigationService.navigateReset("Login");
         dispatch(logoutUser());
       };

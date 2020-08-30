@@ -20,11 +20,12 @@ class HomeScreen extends Component {
       title: params.currentTab ? params.currentTab : tabMapping[0],
       headerTitleStyle: {
         color: "#4158fb",
-        fontFamily: "Ubuntu-Medium",
+        fontFamily: "Ubuntu-Bold",
         alignSelf: 'center',
         textAlign: "center",
         flex: 1
       },
+      headerLeft:(null),
       headerRight: (
         <MenuImage
           onPress={() => {
@@ -73,6 +74,8 @@ class HomeScreen extends Component {
 
   renderTabs = () => {
     const { params } = this.props.navigation.state;
+    let currentTab = params && params.currentTab ? params.currentTab : tabMapping[0];
+
     return (
       <Tabs
         tabBarPosition="bottom"
@@ -80,7 +83,7 @@ class HomeScreen extends Component {
         tabBarUnderlineStyle={{ height: 0 }}
       >
         <Tab
-          heading={<TabHeading style={params.currentTab == tabMapping[0] ? styles.activeTabStyle : styles.tabStyle}><View><Image source={Images.home} style={styles.tabIcon} /></View></TabHeading>}
+          heading={<TabHeading style={currentTab == tabMapping[0] ? styles.activeTabStyle : styles.tabStyle}><View><Image source={Images.home} style={styles.tabIcon} /></View></TabHeading>}
           tabStyle={styles.tabStyle}
           activeTabStyle={styles.activeTabStyle}
           activeTextStyle={styles.activeTextStyle}
@@ -88,7 +91,7 @@ class HomeScreen extends Component {
           <MyDayScreen navigation={this.props.navigation} />
         </Tab>
         <Tab
-          heading={<TabHeading style={params.currentTab == tabMapping[1] ? styles.activeTabStyle : styles.tabStyle}><View><Image source={Images.calendar} style={styles.tabIcon} /></View></TabHeading>}
+          heading={<TabHeading style={currentTab == tabMapping[1] ? styles.activeTabStyle : styles.tabStyle}><View><Image source={Images.calendar} style={styles.tabIcon} /></View></TabHeading>}
           tabStyle={styles.tabStyle}
           activeTabStyle={styles.activeTabStyle}
           activeTextStyle={styles.activeTextStyle}
@@ -96,7 +99,7 @@ class HomeScreen extends Component {
           <CalendarScreen />
         </Tab>
         <Tab
-          heading={<TabHeading style={params.currentTab == tabMapping[2] ? styles.activeTabStyle : styles.tabStyle}><Image source={Images.clock} style={styles.tabIcon} /></TabHeading>}
+          heading={<TabHeading style={currentTab == tabMapping[2] ? styles.activeTabStyle : styles.tabStyle}><Image source={Images.clock} style={styles.tabIcon} /></TabHeading>}
           tabStyle={styles.tabStyle}
           activeTabStyle={styles.activeTabStyle}
           activeTextStyle={styles.activeTextStyle}
