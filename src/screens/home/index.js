@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { NavigationActions, StackActions } from 'react-navigation';
 import { Images } from '../../theme';
+import { fetchCalendarEvents } from '../../redux/actions/taskActions';
+import moment from 'moment';
 
 const tabMapping = { 0: 'MY DAY', 1: 'CALENDAR', 2: 'MY PROGRESS' };
 
@@ -25,7 +27,7 @@ class HomeScreen extends Component {
         textAlign: "center",
         flex: 1
       },
-      headerLeft:(null),
+      headerLeft: (null),
       headerRight: (
         <MenuImage
           onPress={() => {
@@ -42,10 +44,25 @@ class HomeScreen extends Component {
       this.props.navigation.setParams({
         currentTab: tabMapping[0],
       });
+      this.updateGCEvents();
     } else {
       this.navigateBack();
     }
   };
+
+  updateGCEvents = () => {
+    // Check for user timezone
+    let min = moment().toISOString();
+    let max = moment().add(14,'days').toISOString();
+
+    var params = {
+      timeMin: min,
+      timeMax: max,
+      singleEvents: true //to expand recurring events to single events
+    };
+    // console.log("tets", params);
+    this.props.fetchCalendarEvents(params);
+  }
 
   componentDidUpdate() {
     // Redirecting to login page
@@ -126,7 +143,7 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {})(HomeScreen);
+export default connect(mapStateToProps, { fetchCalendarEvents })(HomeScreen);
 
 const styles = StyleSheet.create({
   tabStyle: {

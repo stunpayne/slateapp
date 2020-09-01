@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity,ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity,ActivityIndicator, ScrollView } from 'react-native';
 import CustomModal from "../../../../../components/custom_modal";
 import { Icon } from 'native-base';
 import { styles } from './taskDetailsStyles';
@@ -7,6 +7,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { TaskStatus } from '../../../../../constants';
 import { slateTaskMarkComplete } from '../../../../../redux/actions/taskActions';
+
 
 class TaskDetailsModal extends Component {
   
@@ -37,7 +38,7 @@ class TaskDetailsModal extends Component {
             </View>
           </View>
 
-          <View style={styles.detailsContainer}>
+          <ScrollView style={styles.detailsContainer}>
             <Text style={styles.title}>{task.title}</Text>
             {task.description ?
               <Text style={styles.description}>
@@ -72,7 +73,7 @@ class TaskDetailsModal extends Component {
                   </Text>
                 </React.Fragment> : null
             }
-          </View>
+          </ScrollView>
           <View style={styles.bottomContainer}>
 
             {

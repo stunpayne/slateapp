@@ -10,6 +10,7 @@ import { FIRST_TIME_USE, TaskStatus } from '../../../../constants';
 import { styles } from './mydayStyles';
 import NavigationService from '../../../../services/NavigationService';
 import { ScrollView } from 'react-native-gesture-handler';
+import { getTodayMergedEventsAndTasks } from '../../../../services/taskService';
 
 
 const windowHeight = Dimensions.get('window').height;
@@ -28,9 +29,10 @@ const Item = ({ item, onPress }) => (
         <View style={styles.itemDescription}>
           <Text style={styles.title}>{item.title}</Text>
           <View>
-            {item.description ? <Text style={styles.description}>{item.description}</Text> : null}
+            {item.description ? <Text style={styles.description}>{item.description.length > 20 ? item.description.substring(0,20) + "..." : item.description }</Text> : null}
           </View>
           <View style={styles.timeContainer}>
+            {/* 24-hrs - HH:mm, 12-hrs  hh:mm A*/}
             <Text style={styles.time}>{moment(item.start).format('HH:mm')}-{moment(item.end).format('HH:mm')}</Text>
           </View>
         </View>
@@ -118,7 +120,7 @@ class MyDayScreen extends Component {
               style={styles.button}
               onPress={this.onPressUserConfig}
             >
-              <Text>User Config</Text>
+              <Text>Profile setup</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -126,11 +128,11 @@ class MyDayScreen extends Component {
     );
   }
 
-  renderScreen = (DATA, selectedId) => {
+  renderScreen = (tasks, events, selectedId) => {
+    let DATA = getTodayMergedEventsAndTasks(tasks, events);
     if (DATA && DATA.length > 0) {
       return (
         <React.Fragment>
-
           <View style={{ flexDirection: 'row' }}>
             <View
               style={{
@@ -142,7 +144,7 @@ class MyDayScreen extends Component {
               }}
             />
             <View style={{ flexDirection: 'column', marginTop: 20 }}>
-              <ScrollView style={{maxHeight: windowHeight-300}} >
+              <ScrollView style={{ maxHeight: windowHeight - 300 }} >
                 {DATA.map((item, i) => {
                   return (this.renderItem(item, i))
                 })}
@@ -169,7 +171,7 @@ class MyDayScreen extends Component {
               }}
             />
             <View style={{ flexDirection: 'column', marginTop: 20 }}>
-              <View style={{minHeight: windowHeight-300}} >
+              <View style={{ minHeight: windowHeight - 300 }} >
               </View>
               {
                 this.props.slateInfo.preferences ?
@@ -184,10 +186,10 @@ class MyDayScreen extends Component {
 
   render() {
     const { selectedId } = this.state;
-    const { isLoading, tasks } = this.props;
+    const { isLoading, tasks, events } = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        {this.renderScreen(tasks, selectedId)}
+        {this.renderScreen(tasks, events, selectedId)}
 
         <React.Fragment>
           {this.state.showAddTask && (
@@ -218,6 +220,7 @@ const mapStateToProps = state => ({
   slateInfo: state.auth.slateInfo,
   isAuthenticated: state.auth.isAuthenticated,
   tasks: state.task.tasks,
+  events: state.task.events,
   isLoading: state.task.isLoading,
   isUpdating: state.task.isUpdating,
 });

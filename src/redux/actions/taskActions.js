@@ -1,4 +1,4 @@
-import { FETCH_SLATE_TASKS, TASK_DATA_LOADING_STATUS, TASK_DATA_ADDING_STATUS, TASK_DATA_UPDATE_STATUS } from '../types';
+import { FETCH_SLATE_TASKS, TASK_DATA_LOADING_STATUS, TASK_DATA_ADDING_STATUS, TASK_DATA_UPDATE_STATUS, FETCH_GCALENDER_EVENTS } from '../types';
 import { googleApiClient } from '../../services/GoogleApiService';
 import { CALENDAR_BASE_URL } from '../../constants';
 import axios from 'axios';
@@ -33,18 +33,25 @@ export function setTaskUpdateStatus(status) {
   };
 };
 
-// export const fetchCalendarEvents = (params) => async dispatch => {
-//   dispatch(setDataLoadingStatus(true));
-//   const request = await googleApiClient();
-//   request.get(`${CALENDAR_BASE_URL}/calendars/primary/events`, { params }).then(res => {
-//     if (res.status == 200 && res.data.items) {
-//       dispatch(setCalendarEvents(res.data.items));
-//     };
-//   }).catch(err => {
-//     console.log("err from fetch calendar tasks", err);
-//     dispatch(setDataLoadingStatus(false));
-//   });
-// };
+export function setCalendarEvents(data) {
+  return {
+    type: FETCH_GCALENDER_EVENTS,
+    payload: data
+  };
+};
+
+export const fetchCalendarEvents = (params) => async dispatch => {
+  dispatch(setDataLoadingStatus(true));
+  const request = await googleApiClient();
+  request.get(`${CALENDAR_BASE_URL}/calendars/primary/events`, { params }).then(res => {
+    if (res.status == 200 && res.data.items) {
+      dispatch(setCalendarEvents(res.data.items));
+    };
+  }).catch(err => {
+    console.log("err from fetch calendar tasks", err);
+    dispatch(setDataLoadingStatus(false));
+  });
+};
 
 export const addCalendarEvent = (data) => async dispatch => {
   dispatch(setDataAddingStatus(true));

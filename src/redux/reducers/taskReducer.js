@@ -1,4 +1,4 @@
-import { FETCH_SLATE_TASKS, TASK_DATA_LOADING_STATUS, TASK_DATA_ADDING_STATUS, TASK_DATA_UPDATE_STATUS } from '../types';
+import { FETCH_SLATE_TASKS, TASK_DATA_LOADING_STATUS, TASK_DATA_ADDING_STATUS, TASK_DATA_UPDATE_STATUS, FETCH_GCALENDER_EVENTS } from '../types';
 
 const initialState = {
   isLoading: false,
@@ -17,6 +17,12 @@ export default (state = initialState, action) => {
         isLoading: false,
         isAdding: false,
         isUpdating:false
+      };
+    case FETCH_GCALENDER_EVENTS:
+      return {
+        ...state,
+        events: action.payload,
+        isLoading: false,
       };
     case TASK_DATA_LOADING_STATUS:
       return {
