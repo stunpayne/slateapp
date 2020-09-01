@@ -11,4 +11,5 @@ export default {
   home: require('../assets/images/home.png'), 
   clock: require('../assets/images/clock.png'), 
   calendar: require('../assets/images/calendar.png'),
+  user_profile_image:require('../assets/images/user_profile_image.png'),
 }

@@ -7,10 +7,12 @@ import { fetchSlateTasks, slateTaskMarkComplete } from '../../../../redux/action
 import AddTaskModal from './add_task';
 import TaskDetailsModal from './task_details';
 import { FIRST_TIME_USE, TaskStatus } from '../../../../constants';
-const windowHeight = Dimensions.get('window').height;
 import { styles } from './mydayStyles';
 import NavigationService from '../../../../services/NavigationService';
 import { ScrollView } from 'react-native-gesture-handler';
+
+
+const windowHeight = Dimensions.get('window').height;
 
 const Item = ({ item, onPress }) => (
   <View style={styles.item}>
@@ -167,6 +169,8 @@ class MyDayScreen extends Component {
               }}
             />
             <View style={{ flexDirection: 'column', marginTop: 20 }}>
+              <View style={{minHeight: windowHeight-300}} >
+              </View>
               {
                 this.props.slateInfo.preferences ?
                   this.AddTaskContainer() : this.AddPreferenceContainer()

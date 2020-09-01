@@ -33,5 +33,36 @@ export const styles = StyleSheet.create({
   input: {
     fontFamily: "Ubuntu-Regular",
     fontSize: 18,
+  },
+  tabStyle: {
+    backgroundColor: "#ffffff",
+  },
+  activeTabStyle: {
+    // backgroundColor: "#4158fb",
+    backgroundColor: "#ffffff",
+  },
+  tabBarUnderlineStyle:{
+    backgroundColor:"#dd3878"
+  },
+  activeTextStyle:{
+    color:"#000000",
+    fontFamily: "Ubuntu-Regular",
+    fontWeight:"bold",
+    fontSize:14
+  },
+  textStyle:{
+    color:'rgba(0,0,0,0.45)',
+    fontFamily: "Ubuntu-Regular",
+    fontWeight:"bold",
+    fontSize:14
+  },
+  topContainer:{
+    padding:30
+  },
+  user_profile_image:{
+    width:120,
+    height:120,
+    borderRadius:60,
+    alignSelf:"center"
   }
 });
