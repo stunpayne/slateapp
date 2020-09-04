@@ -184,8 +184,6 @@ class UserConfigurationScreen extends Component {
             />
           </View>
 
-
-
           <Tabs tabBarUnderlineStyle={styles.tabBarUnderlineStyle}>
             <Tab heading={tabMapping[0]}
               tabStyle={styles.tabStyle}

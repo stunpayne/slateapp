@@ -47,6 +47,9 @@ class TaskDetailsModal extends Component {
               : null}
 
             <Text>
+              Type : {task.kind}
+            </Text>
+            <Text>
               Status : {task.status}
             </Text>
             <Text>

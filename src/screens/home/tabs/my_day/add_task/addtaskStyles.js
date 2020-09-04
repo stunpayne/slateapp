@@ -8,10 +8,29 @@ export const styles = StyleSheet.create({
     paddingVertical: 5 
   },
   button: {
-    alignItems: "center",
-    backgroundColor: "#ef6b91",
-    padding: 10,
-    margin: 20
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignSelf: "center",
+    marginTop: 20,
+    borderRadius: 12,
+  },
+  label:{
+    fontSize: 14,
+    fontFamily: "Ubuntu-Regular",
+    color: 'rgba(0,0,0,0.61)'
+  },
+  input: {
+    fontFamily: "Ubuntu-Regular",
+    fontSize: 18,
+  },
+  buttonText: {
+    fontFamily: "Ubuntu-Regular",
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#4158fb",
+  },
+  item: {
+    marginTop: 10
   },
   errorTextStyle: {
     color: "#ff0000",
