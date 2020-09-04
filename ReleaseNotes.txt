@@ -1,0 +1,10 @@
+v2
+-fixed persisting store after logout
+-suppressed animated warning on metro console
+-added validation to add task form
+v3
+-removed buttons in add task
+-Added user config screen
+-added splash screen redirection to home
+
+
