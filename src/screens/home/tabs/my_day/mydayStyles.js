@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   itemMain: {
-    padding: 20,
+    padding: 15,
     marginVertical: 8,
     marginRight: 20,
     marginLeft: 10,
@@ -60,8 +60,8 @@ export const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
   },
   button: {
     alignItems: "center",

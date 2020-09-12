@@ -8,12 +8,14 @@ import {
 import { connect } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import momentz from 'moment-timezone';
 import { addCalendarEvent, addSlateTask } from '../../../../../redux/actions/taskActions';
 import { googleApiClient } from '../../../../../services/GoogleApiService';
 import { isValidDate, checkEndValid, extractDateTime, fetchDndSlots } from './helper';
 import { createSlots } from '../../../../../services/SlotterService';
 import { CALENDAR_BASE_URL, SLOT_TYPE_FREE } from '../../../../../constants';
 import { styles } from "./addtaskStyles";
+
 
 
 class AddTaskModal extends Component {
@@ -130,19 +132,23 @@ class AddTaskModal extends Component {
       const { duration, endDate, endTime, eventName } = this.state.fields;
       const eventDescription = this.state.fields.eventDescription ? this.state.fields.eventDescription : "";
       const category = this.state.fields.category ? this.state.fields.category : "default";
+      const d_timezone = this.props.slateInfo.default_timezone;
 
       let deadline_ts = extractDateTime(endDate, endTime); //get deadline timestamp
-      let isDeadlineValid = checkEndValid(moment().toISOString(), deadline_ts) //checking if deadline_ts > now
+      let isDeadlineValid = checkEndValid(momentz().tz(d_timezone).format(), deadline_ts) //checking if deadline_ts > now
 
       if (isDeadlineValid) {
         this.setState({ dataLoading: true });
         const request = await googleApiClient();
-        let now = moment().toISOString();
+        let now = momentz().tz(d_timezone).format();
         var params = {
           timeMin: now,
           timeMax: deadline_ts,
           singleEvents: true //to expand recurring events to single events
         };
+
+        // console.log("now", now);
+        // console.log("pparams", params);
 
         // fetching calender events till deadline
         request.get(`${CALENDAR_BASE_URL}/calendars/primary/events`, { params }).then(res => {
@@ -164,10 +170,13 @@ class AddTaskModal extends Component {
             let mergedEvents = [...refactoredEvents, ...dndSlots];
             let slots = createSlots(deadline_ts, mergedEvents);
             let scheduleEvent = this.scheduleSlot(task, slots);
+            
+            // console.log("mergedEvents", mergedEvents);
+            // console.log("slots", slots);
 
             if (scheduleEvent) {
               // free slot found
-              console.log("scheduleEvent", scheduleEvent);
+              // console.log("scheduleEvent", scheduleEvent);
               this.props.addCalendarEvent(scheduleEvent).then(response => {
                 if (response.status == 200) {
                   let slateTask = {

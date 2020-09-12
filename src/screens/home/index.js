@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import MyDayScreen from "./tabs/my_day";
 import CalendarScreen from "./tabs/calendar";
 import AnalyticsScreen from "./tabs/analytics";
-import { Container, Tab, Tabs, TabHeading } from 'native-base';
+import { Container, Tab, Tabs, TabHeading, Icon } from 'native-base';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -27,7 +27,7 @@ class HomeScreen extends Component {
         textAlign: "center",
         flex: 1
       },
-      headerLeft: (null),
+      headerLeft: (<View></View>),
       headerRight: (
         <MenuImage
           onPress={() => {

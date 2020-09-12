@@ -56,7 +56,7 @@ class TaskDetailsModal extends Component {
               Duration: {task.duration}
             </Text>
             <Text>
-              Deadline: {moment(task.deadline).format('lll')}
+              {/* Deadline: {moment(task.deadline).format('lll')} */}
             </Text>
 
             {

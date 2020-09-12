@@ -124,6 +124,7 @@ export function createSlots(deadline, calendarEvents) {
     timeSlots.push(SimpleSlot(getEndTime(slottingResult.lastEvent).format(), deadline, SLOT_TYPE_FREE))
   };
 
+  // console.log("timeSlots",timeSlots);
   return timeSlots;
 };
 
@@ -151,6 +152,11 @@ export function getDndSlots(start_ts, end_ts, dnd_start_time, dnd_end_time, time
     // firstDay - 6:30 AM, sameDay - 12:30 PM
     dnd_start_ts = getTimeWithTz(start_date, dnd_start_time);
     dnd_end_ts = getTimeWithTz(start_date, dnd_end_time);
+    if(moment()  > dnd_end_ts){
+      // if cur_time >  today's dnd end time, then skip that days dnd slot
+      dnd_start_ts.add(1,"days");
+      dnd_end_ts.add(1,"days");
+    }
   } else if (aDate > bDate) {
     // 'a happend after b'
     // firstDay - 10:30 PM, NextDay - 6:30 AM
@@ -161,7 +167,7 @@ export function getDndSlots(start_ts, end_ts, dnd_start_time, dnd_end_time, time
     return [];
   }
 
-  console.log("dnd_start_ts, dnd_end_ts", dnd_start_ts.toObject(), dnd_end_ts.toObject());
+  console.log("dnd_start_ts, dnd_end_ts", dnd_start_ts.format(), dnd_end_ts.format());
   let dnd_end_ts_copy = dnd_end_ts.clone();;
 
   if (moment() < dnd_end_ts_copy.subtract(1, "days")) {
@@ -184,6 +190,6 @@ export function getDndSlots(start_ts, end_ts, dnd_start_time, dnd_end_time, time
     dndSlots.push(dndSlot);
   };
 
-  console.log(dndSlots);
+  console.log("dndSlots",dndSlots);
   return dndSlots;
 };

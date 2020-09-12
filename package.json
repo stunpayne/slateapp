@@ -25,6 +25,7 @@
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-native-animated-swiper": "0.0.23",
+    "react-native-calendar-strip": "^2.0.9",
     "react-native-dotenv": "^0.2.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-linear-gradient": "^2.5.6",
@@ -32,6 +33,7 @@
     "react-navigation": "^3.11.0",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
