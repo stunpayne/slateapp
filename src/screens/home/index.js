@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import MyDayScreen from "./tabs/my_day";
 import CalendarScreen from "./tabs/calendar";
 import AnalyticsScreen from "./tabs/analytics";
-import { Container, Tab, Tabs, TabHeading, Icon } from 'native-base';
+import { Container, Tab, Tabs, TabHeading, Icon, Content } from 'native-base';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -53,7 +53,7 @@ class HomeScreen extends Component {
   updateGCEvents = () => {
     // Check for user timezone
     let min = moment().toISOString();
-    let max = moment().add(14,'days').toISOString();
+    let max = moment().add(14, 'days').toISOString();
 
     var params = {
       timeMin: min,
