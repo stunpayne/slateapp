@@ -171,7 +171,7 @@ class MyDayScreen extends Component {
                 style={{
                   flex: 1,
                   justifyContent: 'flex-end',
-                  marginBottom: 110
+                  marginBottom: '35%'
                 }}>
                 {
                   this.props.slateInfo.preferences ?
@@ -200,7 +200,7 @@ class MyDayScreen extends Component {
                 style={{
                   flex: 1,
                   justifyContent: 'flex-end',
-                  marginBottom: 110
+                  marginBottom: '35%'
                 }}>
                 {
                   this.props.slateInfo.preferences ?

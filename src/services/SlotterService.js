@@ -110,6 +110,8 @@ export function createSlots(deadline, calendarEvents) {
     return 1;
   });
 
+  console.log("calendar Events", calendarEvents);
+
   let timeSlots = [];
   //  If the start time is before the time the first event starts at, there is a free slot
   if (moment(startTime) < getStartTime(calendarEvents[0])) {
@@ -124,7 +126,7 @@ export function createSlots(deadline, calendarEvents) {
     timeSlots.push(SimpleSlot(getEndTime(slottingResult.lastEvent).format(), deadline, SLOT_TYPE_FREE))
   };
 
-  // console.log("timeSlots",timeSlots);
+  console.log("timeSlots",timeSlots);
   return timeSlots;
 };
 

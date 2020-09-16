@@ -30,8 +30,8 @@ export const fetchDndSlots = (start, end, slateInfo) =>  {
   let dndSlots = [];
   let wh = slateInfo.preferences.working_hours;
   if (USER_DND_ENABLED) {
-    var USER_DND_START = moment(wh.wh_start, ["HH:mm"]).format("hh:mm A");
-    var USER_DND_STOP = moment(wh.wh_end, ["HH:mm"]).format("hh:mm A");
+    var USER_DND_STOP = moment(wh.wh_start, ["HH:mm"]).format("hh:mm A");
+    var USER_DND_START = moment(wh.wh_end, ["HH:mm"]).format("hh:mm A");
     var timezone = slateInfo.default_timezone;
     dndSlots = getDndSlots(start, end, USER_DND_START, USER_DND_STOP, timezone);
   };
