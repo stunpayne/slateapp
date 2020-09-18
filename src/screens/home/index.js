@@ -52,8 +52,8 @@ class HomeScreen extends Component {
 
   updateGCEvents = () => {
     // Check for user timezone
-    let min = moment().toISOString();
-    let max = moment().add(14, 'days').toISOString();
+    let min = moment().startOf('day').toISOString();
+    let max = moment().add(14, 'days').endOf('day').toISOString();
 
     var params = {
       timeMin: min,
@@ -113,7 +113,7 @@ class HomeScreen extends Component {
           activeTabStyle={styles.activeTabStyle}
           activeTextStyle={styles.activeTextStyle}
         >
-          <CalendarScreen />
+          <CalendarScreen updateGCEvents={this.updateGCEvents} />
         </Tab>
         <Tab
           heading={<TabHeading style={currentTab == tabMapping[2] ? styles.activeTabStyle : styles.tabStyle}><Image source={Images.clock} style={styles.tabIcon} /></TabHeading>}

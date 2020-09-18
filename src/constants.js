@@ -18,6 +18,11 @@ export const TaskStatus= {
   DELETED: 'DELETED'
 };
 
+export const calendarEventColor = {
+  google:"calendar#event",
+  slate:"slate#task"
+};
+
 export const USER_DND_ENABLED = true;
 // export const USER_DND_START = "10:30 PM";
 // export const USER_DND_STOP = "6:30 AM";

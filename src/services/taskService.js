@@ -5,6 +5,8 @@ import momentz from 'moment-timezone';
 function getTaskFromEvent(event) {
   let task = {};
   let duration = moment(event.end.dateTime).diff(moment(event.start.dateTime), "minutes");
+  
+  task.id = event.id ? event.id : "";
   task.title = event.summary;
   task.description = event.description ? event.description : "";
   task.creation_time = moment(event.created).valueOf();
@@ -28,16 +30,26 @@ export function getMergedEventsAndTasks(tasks, events) {
     data.push(task);
   });
 
+  // console.log("events", events);
+  // console.log("data", data);
+
   let set = new Set();
 
   let unionArray = data.filter(item => {
-    if (!set.has(item.title)) {
-      set.add(item.title);
-      return true;
-    }
+    if (item.kind == "slate#task"){
+      if (!set.has(item.calendar_id)) {
+        set.add(item.calendar_id);
+        return true;
+      };
+    } else if(item.kind == "calendar#event"){
+      if (!set.has(item.id)) {
+        set.add(item.id);
+        return true;
+      };
+    };
     return false;
   }, set);
-  // console.log(unionArray);
+  // console.log("unionArray",unionArray);
   return unionArray;
 };
 

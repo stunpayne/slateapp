@@ -4,22 +4,53 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Calendar } from '../../../../components/calendar';
 import CalendarStrip from 'react-native-calendar-strip';
 import moment from 'moment';
+import { connect } from 'react-redux';
+import { getMergedEventsAndTasks } from '../../../../services/taskService';
+import { calendarEventColor } from "../../../../constants";
 
 const height = Dimensions.get('window').height;
-
-const events = [
-  {
-    title: 'dummy Meeting',
-    start: moment(),
-    end: moment().add(1, 'hour'),
-  }
-]
 
 
 class CalendarScreen extends Component {
   state = {
-    selectedDate: moment(),
-    formattedDate: moment().format('YYYY-MM-DD')
+    selectedDate: moment(),    
+    data:[],
+    selectedEvents:[]
+  };
+
+  componentDidMount() {
+    this.setCalendarData();
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.tasks != this.props.tasks || prevProps.events != this.props.events) {
+      this.setCalendarData();
+    }
+  };
+
+  setCalendarData = () => {
+    const { tasks, events } = this.props;
+    let default_timezone = this.props.slateInfo.default_timezone;
+    let data = getMergedEventsAndTasks(tasks, events, default_timezone);
+    let selectedEvents = this.getEventsByDate(data, this.state.selectedDate);
+    this.setState({ data, selectedEvents });
+  };
+
+  getEventsByDate(data, date){
+    let events = [];
+    data.map(e=>{      
+      let {title, start, end, kind} = e;
+      if (moment(start).format("YYYY-MM-DD") == date.format('YYYY-MM-DD')){
+        let event = {};
+        event['title'] = title;
+        event['start'] = moment(start);
+        event['end'] = moment(end);
+        event['kind'] = kind;
+        events.push(event);
+      };
+    });
+
+    return events;
   };
 
   datesBlacklistFunc = date => {
@@ -28,7 +59,17 @@ class CalendarScreen extends Component {
   }
 
   onDateSelected = date => {
-    this.setState({ formattedDate: date.format('YYYY-MM-DD') });
+    // console.log(date.format('YYYY-MM-DD'));
+    let selectedEvents = this.getEventsByDate(this.state.data, date);
+    this.setState({ selectedEvents, selectedDate:date });
+  };
+  
+  handleCellStyle = e =>{
+    if(e.kind == calendarEventColor.slate){
+      return {backgroundColor: "#4158fb"};
+    } else {
+      return {backgroundColor: "#4285F4"};
+    }
   };
 
   render() {
@@ -57,10 +98,12 @@ class CalendarScreen extends Component {
         />
         <View style={{maxHeight: "75%"}}>
           <Calendar
+            date = {this.state.selectedDate}
             mode={'day'}
-            events={events}
+            events={this.state.selectedEvents}
             height={height}
             onPressDateHeader={date => console.log("date", date)}
+            eventCellStyle = {this.handleCellStyle}
           />
         </View>
       </View>
@@ -68,6 +111,15 @@ class CalendarScreen extends Component {
   }
 };
 
-export default CalendarScreen;
+
+const mapStateToProps = state => ({
+  userInfo: state.auth.userInfo,
+  slateInfo: state.auth.slateInfo,
+  isAuthenticated: state.auth.isAuthenticated,
+  tasks: state.task.tasks,
+  events: state.task.events
+});
+
+export default connect(mapStateToProps, {  })(CalendarScreen);
 
 const styles = StyleSheet.create({});

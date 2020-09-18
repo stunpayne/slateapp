@@ -174,8 +174,8 @@ class AddTaskModal extends Component {
             let slots = createSlots(deadline_ts, mergedEvents);
             let scheduleEvent = this.scheduleSlot(task, slots);
             
-            console.log("mergedEvents", mergedEvents);
-            console.log("slots", slots);
+            // console.log("mergedEvents", mergedEvents);
+            // console.log("slots", slots);
 
             if (scheduleEvent) {
               // free slot found
@@ -191,7 +191,8 @@ class AddTaskModal extends Component {
                     category: category,
                     status: "SCHEDULED",
                     start: scheduleEvent.start.dateTime,
-                    end: scheduleEvent.end.dateTime
+                    end: scheduleEvent.end.dateTime,
+                    calendar_id:response.data.id
                   };
                   this.props.addSlateTask(slateTask).then(res => {
                     if (res.status == 200 || res.status == 201) {
