@@ -113,9 +113,9 @@ class MyDayScreen extends Component {
           <View style={{ minHeight: 80 }}>
             <View style={styles.hbar}></View>
             <Text style={styles.addTaskMessage}>NO PENDING TASKS FOR THE DAY</Text>
-            <TouchableOpacity onPress={this.onPressAddTask} style={{ alignSelf: "flex-end", borderRadius: 25, elevation: 3 }}>
+            {/* <TouchableOpacity onPress={this.onPressAddTask} style={{ alignSelf: "flex-end", borderRadius: 25, elevation: 3 }}>
               <Image style={styles.addTaskImage} source={Images.add_task_icon_light} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </View>
@@ -149,10 +149,10 @@ class MyDayScreen extends Component {
     if (DATA && DATA.length > 0) {
       return (
         <React.Fragment>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flex:1, flexDirection: 'row' }}>
             <View
               style={{
-                height: windowHeight,
+                height:"100%",
                 width: 6,
                 backgroundColor: "#4158fb",
                 marginRight: -13,
@@ -160,24 +160,12 @@ class MyDayScreen extends Component {
               }}
             />
             <View style={{ flexDirection: 'column' }}>
-              <ScrollView style={{ maxHeight: "67%", paddingTop:10 }} >
+              <ScrollView style={{ paddingTop: 10 }} >
                 {DATA.map((item, i) => {
                   return (this.renderItem(item, i))
                 })}
-
-                <View style={{padding:10}}></View>
+                <View style={{ padding: 10 }}></View>
               </ScrollView>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'flex-end',
-                  marginBottom: '35%'
-                }}>
-                {
-                  this.props.slateInfo.preferences ?
-                    this.AddTaskContainer() : null
-                }
-              </View>
             </View>
           </View>
         </React.Fragment>
@@ -185,30 +173,20 @@ class MyDayScreen extends Component {
     } else {
       return (
         <React.Fragment>
-          <View style={{ flexDirection: 'row' }}>
-            <View
-              style={{
-                height: windowHeight,
-                width: 6,
-                backgroundColor: "#4158fb",
-                marginRight: -13,
-                marginLeft: 15
-              }}
-            />
-            <View style={{ flexDirection: 'column' }}>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'flex-end',
-                  marginBottom: '35%'
-                }}>
-                {
-                  this.props.slateInfo.preferences ?
-                    this.AddTaskContainer() : this.AddPreferenceContainer()
-                }
-              </View>
-            </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              zIndex:-1
+            }}>
+            {
+              this.props.slateInfo.preferences ?
+                this.AddTaskContainer() : null
+            }
           </View>
+          <View style={{ padding: 10 }}></View>
         </React.Fragment>
       )
     }
@@ -220,6 +198,10 @@ class MyDayScreen extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.renderMyDayScreen()}
+
+        <TouchableOpacity onPress={this.onPressAddTask} style={styles.addTaskFAB}>
+          <Image style={styles.addTaskImage} source={Images.add_task_icon_light} />
+        </TouchableOpacity>
 
         <React.Fragment>
           {this.state.showAddTask && (

@@ -95,7 +95,7 @@ class HomeScreen extends Component {
 
     return (
       <Tabs
-        tabBarPosition="bottom"
+        tabBarPosition="overlayBottom"
         onChangeTab={({ i }) => this.handleTabChange(i)}
         tabBarUnderlineStyle={{ height: 0 }}
       >

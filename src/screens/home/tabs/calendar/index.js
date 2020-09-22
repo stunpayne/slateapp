@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
 // import { Calendar } from 'react-native-big-calendar';
 import { Calendar } from '../../../../components/calendar';
 import CalendarStrip from 'react-native-calendar-strip';
@@ -74,7 +74,7 @@ class CalendarScreen extends Component {
 
   render() {
     return (
-      <View style={{flex:1}}>
+      <SafeAreaView style={{flex:1}}>
         <CalendarStrip
           scrollable={false}
           selectedDate={this.state.selectedDate}
@@ -96,7 +96,7 @@ class CalendarScreen extends Component {
             borderBottomWidth: 1,
           }}
         />
-        <View style={{maxHeight: "75%"}}>
+        <View style={{flex:1}}>
           <Calendar
             date = {this.state.selectedDate}
             mode={'day'}
@@ -106,7 +106,7 @@ class CalendarScreen extends Component {
             eventCellStyle = {this.handleCellStyle}
           />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 };

@@ -50,9 +50,7 @@ class UserConfigurationScreen extends Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.populateForm();
-    }, 200);
+    this.populateForm();
   };
 
   populateForm = () => {

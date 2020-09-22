@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     marginLeft: 10,
     width: '85%',
     backgroundColor: "#ffffff",
-    elevation:4,
+    elevation: 4,
     borderRadius: 27
   },
   itemMainView: {
@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
     fontFamily: "Ubuntu-Regular",
     color: "#000000"
   },
-  description:{
+  description: {
     fontSize: 12,
     color: "#4158fb",
     fontFamily: "Ubuntu-Light",
@@ -69,21 +69,31 @@ export const styles = StyleSheet.create({
     padding: 10,
     margin: 20
   },
-  hbar:{
-    width:70,
-    height:6,
-    borderRadius:3,
-    backgroundColor:"#e8e8e8",
-    alignSelf:"center"
+  hbar: {
+    width: 70,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#e8e8e8",
+    alignSelf: "center"
   },
-  addTaskMessage:{
-    textAlign:"center", 
-    marginTop:10,
-    fontSize:12,
+  addTaskMessage: {
+    textAlign: "center",
+    marginTop: 10,
+    fontSize: 12,
     fontFamily: "Ubuntu-Regular",
   },
-  addTaskImage:{
-    width:50,
-    height:50
+  addTaskImage: {
+    width: 50,
+    height: 50
+  },
+  addTaskFAB: {
+    alignSelf: "flex-end", 
+    borderRadius: 25, 
+    elevation: 3,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 35,
+    bottom: 35,
   }
 })
