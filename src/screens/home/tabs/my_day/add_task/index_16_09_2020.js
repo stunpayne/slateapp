@@ -102,12 +102,9 @@ class AddTaskModal extends Component {
 
   scheduleSlot(task, slots) {
     const freeSlot = slots.find((slot) => {
-      var a = moment(slot.start.dateTime);
-      var b = moment(slot.end.dateTime);
-      var m_dif = b.diff(a, 'minutes'); //end-start
-      if (slot.slotType == SLOT_TYPE_FREE && m_dif > task.duration) {
+      if (slot.slotType == SLOT_TYPE_FREE) {
         return slot
-      };
+      }
     });
 
     if (typeof freeSlot !== 'undefined') {
@@ -179,7 +176,7 @@ class AddTaskModal extends Component {
 
             if (scheduleEvent) {
               // free slot found
-              console.log("scheduleEvent", scheduleEvent);
+              // console.log("scheduleEvent", scheduleEvent);
               this.props.addCalendarEvent(scheduleEvent).then(response => {
                 if (response.status == 200) {
                   let slateTask = {
@@ -191,8 +188,7 @@ class AddTaskModal extends Component {
                     category: category,
                     status: "SCHEDULED",
                     start: scheduleEvent.start.dateTime,
-                    end: scheduleEvent.end.dateTime,
-                    calendar_id:response.data.id
+                    end: scheduleEvent.end.dateTime
                   };
                   this.props.addSlateTask(slateTask).then(res => {
                     if (res.status == 200 || res.status == 201) {

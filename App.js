@@ -1,9 +1,10 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { store } from './src/redux/store';
+import { store, persistor } from './src/redux/store';
 import AppNavigator from './src/routes';
 import { createAppContainer } from 'react-navigation';
 import NavigationService from './src/services/NavigationService';
+import { PersistGate } from 'redux-persist/integration/react';
 
 
 const AppContainer = createAppContainer(AppNavigator);
@@ -12,11 +13,13 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <AppContainer
-          ref={navigatorRef => {
-            NavigationService.setTopLevelNavigator(navigatorRef);
-          }}
-        />
+        <PersistGate persistor={persistor}>
+          <AppContainer
+            ref={navigatorRef => {
+              NavigationService.setTopLevelNavigator(navigatorRef);
+            }}
+          />
+        </PersistGate>
       </Provider>
     );
   }

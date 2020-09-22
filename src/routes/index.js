@@ -33,7 +33,8 @@ const DrawerStack = createDrawerNavigator(
     drawerPosition: 'right',
     initialRouteName: 'Main',
     drawerWidth: 300,
-    contentComponent: DrawerContainer
+    contentComponent: DrawerContainer,
+    drawerLockMode: 'locked-closed',
   }
 );
 

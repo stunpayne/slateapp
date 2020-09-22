@@ -29,7 +29,7 @@ const Item = ({ item, onPress }) => (
         <View style={styles.itemDescription}>
           <Text style={styles.title}>{item.title}</Text>
           <View>
-            {item.description ? <Text style={styles.description}>{item.description.length > 20 ? item.description.substring(0,20) + "..." : item.description }</Text> : null}
+            {item.description ? <Text style={styles.description}>{item.description.length > 20 ? item.description.substring(0, 20) + "..." : item.description}</Text> : null}
           </View>
           <View style={styles.timeContainer}>
             {/* 24-hrs - HH:mm, 12-hrs  hh:mm A*/}
@@ -44,6 +44,7 @@ const Item = ({ item, onPress }) => (
 
 class MyDayScreen extends Component {
   state = {
+    data: [],
     selectedTask: null,
     showTaskDetails: false,
     showAddTask: false
@@ -51,7 +52,22 @@ class MyDayScreen extends Component {
 
   componentDidMount() {
     this.getSlateTasks();
+    this.setMyDayData();
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.tasks != this.props.tasks || prevProps.events != this.props.events) {
+      this.setMyDayData();
+    }
+  };
+
+  setMyDayData = () => {
+    const { tasks, events } = this.props;
+    let default_timezone = this.props.slateInfo.default_timezone;
+    let data = getTodayMergedEventsAndTasks(tasks, events, default_timezone);
+    this.setState({ data });
+  };
+
 
   getSlateTasks = () => {
     let data = { user_id: this.props.slateInfo.id };
@@ -94,12 +110,12 @@ class MyDayScreen extends Component {
         <View style={styles.circleView}>
         </View>
         <View style={styles.itemMain}>
-          <View style={{ minHeight: 100 }}>
+          <View style={{ minHeight: 80 }}>
             <View style={styles.hbar}></View>
             <Text style={styles.addTaskMessage}>NO PENDING TASKS FOR THE DAY</Text>
-            <TouchableOpacity onPress={this.onPressAddTask} style={{ alignSelf: "flex-end", borderRadius: 25, elevation: 3 }}>
+            {/* <TouchableOpacity onPress={this.onPressAddTask} style={{ alignSelf: "flex-end", borderRadius: 25, elevation: 3 }}>
               <Image style={styles.addTaskImage} source={Images.add_task_icon_light} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </View>
@@ -112,7 +128,7 @@ class MyDayScreen extends Component {
         <View style={styles.circleView}>
         </View>
         <View style={styles.itemMain}>
-          <View style={{ minHeight: 100 }}>
+          <View style={{ minHeight: 80 }}>
             <View style={styles.hbar}></View>
             <Text style={styles.addTaskMessage}>Fill your preferences to be able to add your tasks</Text>
 
@@ -128,31 +144,28 @@ class MyDayScreen extends Component {
     );
   }
 
-  renderScreen = (tasks, events, selectedId) => {
-    let DATA = getTodayMergedEventsAndTasks(tasks, events);
+  renderMyDayScreen = () => {
+    let DATA = this.state.data;
     if (DATA && DATA.length > 0) {
       return (
         <React.Fragment>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flex:1, flexDirection: 'row' }}>
             <View
               style={{
-                height: windowHeight,
+                height:"100%",
                 width: 6,
                 backgroundColor: "#4158fb",
                 marginRight: -13,
                 marginLeft: 15
               }}
             />
-            <View style={{ flexDirection: 'column', marginTop: 20 }}>
-              <ScrollView style={{ maxHeight: windowHeight - 300 }} >
+            <View style={{ flexDirection: 'column' }}>
+              <ScrollView style={{ paddingTop: 10 }} >
                 {DATA.map((item, i) => {
                   return (this.renderItem(item, i))
                 })}
+                <View style={{ padding: 10 }}></View>
               </ScrollView>
-              {
-                this.props.slateInfo.preferences ?
-                  this.AddTaskContainer() : null
-              }
             </View>
           </View>
         </React.Fragment>
@@ -160,25 +173,20 @@ class MyDayScreen extends Component {
     } else {
       return (
         <React.Fragment>
-          <View style={{ flexDirection: 'row' }}>
-            <View
-              style={{
-                height: windowHeight,
-                width: 6,
-                backgroundColor: "#4158fb",
-                marginRight: -13,
-                marginLeft: 15
-              }}
-            />
-            <View style={{ flexDirection: 'column', marginTop: 20 }}>
-              <View style={{ minHeight: windowHeight - 300 }} >
-              </View>
-              {
-                this.props.slateInfo.preferences ?
-                  this.AddTaskContainer() : this.AddPreferenceContainer()
-              }
-            </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              zIndex:-1
+            }}>
+            {
+              this.props.slateInfo.preferences ?
+                this.AddTaskContainer() : null
+            }
           </View>
+          <View style={{ padding: 10 }}></View>
         </React.Fragment>
       )
     }
@@ -189,7 +197,11 @@ class MyDayScreen extends Component {
     const { isLoading, tasks, events } = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        {this.renderScreen(tasks, events, selectedId)}
+        {this.renderMyDayScreen()}
+
+        <TouchableOpacity onPress={this.onPressAddTask} style={styles.addTaskFAB}>
+          <Image style={styles.addTaskImage} source={Images.add_task_icon_light} />
+        </TouchableOpacity>
 
         <React.Fragment>
           {this.state.showAddTask && (

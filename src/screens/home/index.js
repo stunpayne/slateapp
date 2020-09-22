@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import MyDayScreen from "./tabs/my_day";
 import CalendarScreen from "./tabs/calendar";
 import AnalyticsScreen from "./tabs/analytics";
-import { Container, Tab, Tabs, TabHeading } from 'native-base';
+import { Container, Tab, Tabs, TabHeading, Icon, Content } from 'native-base';
 import { connect } from 'react-redux';
 import MenuImage from "../../components/menu_image";
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -27,7 +27,7 @@ class HomeScreen extends Component {
         textAlign: "center",
         flex: 1
       },
-      headerLeft: (null),
+      headerLeft: (<View></View>),
       headerRight: (
         <MenuImage
           onPress={() => {
@@ -52,8 +52,8 @@ class HomeScreen extends Component {
 
   updateGCEvents = () => {
     // Check for user timezone
-    let min = moment().toISOString();
-    let max = moment().add(14,'days').toISOString();
+    let min = moment().startOf('day').toISOString();
+    let max = moment().add(14, 'days').endOf('day').toISOString();
 
     var params = {
       timeMin: min,
@@ -95,7 +95,7 @@ class HomeScreen extends Component {
 
     return (
       <Tabs
-        tabBarPosition="bottom"
+        tabBarPosition="overlayBottom"
         onChangeTab={({ i }) => this.handleTabChange(i)}
         tabBarUnderlineStyle={{ height: 0 }}
       >
@@ -113,7 +113,7 @@ class HomeScreen extends Component {
           activeTabStyle={styles.activeTabStyle}
           activeTextStyle={styles.activeTextStyle}
         >
-          <CalendarScreen />
+          <CalendarScreen updateGCEvents={this.updateGCEvents} />
         </Tab>
         <Tab
           heading={<TabHeading style={currentTab == tabMapping[2] ? styles.activeTabStyle : styles.tabStyle}><Image source={Images.clock} style={styles.tabIcon} /></TabHeading>}
