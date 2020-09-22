@@ -14,11 +14,11 @@ import NavigationService from '../../services/NavigationService';
 import { styles } from './userConfigStyles';
 import { Images } from '../../theme';
 
-const tabMapping = { 0: 'SETTINGS', 1: 'ABOUT' };
+const tabMapping = { 0: 'SETTINGS', 1: 'PROFILE' };
 
 class UserConfigurationScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: 'PROFILE SETUP',
+    title: 'PREFERENCES',
     headerTitleStyle: {
       color: "#4158fb",
       fontFamily: "Ubuntu-Bold",
@@ -26,13 +26,15 @@ class UserConfigurationScreen extends Component {
       textAlign: "center",
       flex: 1
     },
-    headerLeft: (null
-      // <BackButton
-      //   onPress={() => {
-      //     console.log("back button pressed");
-      //     NavigationService.navigate("Home");
-      //   }}
-      // />
+    headerLeft: (
+      <BackButton
+        onPress={() => {          
+          NavigationService.navigate("Home");
+        }}
+      />
+    ),
+    headerRight:(
+      <View />
     )
   });
 
@@ -279,6 +281,23 @@ class UserConfigurationScreen extends Component {
                     <CheckBox checked={this.state.push_notifications} color={'#4158fb'} onPress={e => this.checkBoxPressed()} />
                   </ListItem>
 
+
+                  <TouchableOpacity
+                    onPress={this.onSubmit}
+                  >
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>Submit</Text>
+                      {dataLoading || isLoading ? <ActivityIndicator size="large" color="#4158fb" /> : null}
+                    </View>
+                  </TouchableOpacity>
+
+                  {/* <TouchableOpacity
+                    onPress={() => { NavigationService.navigateReset("Home") }}
+                  >
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>Go to Home</Text>
+                    </View>
+                  </TouchableOpacity> */}
                 </Form>
               </View>
             </Tab>
@@ -343,13 +362,13 @@ class UserConfigurationScreen extends Component {
                     </View>
                   </TouchableOpacity>
 
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     onPress={() => { NavigationService.navigateReset("Home") }}
                   >
                     <View style={styles.button}>
                       <Text style={styles.buttonText}>Go to Home</Text>
                     </View>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </Form>
               </View>
             </Tab>
