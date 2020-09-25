@@ -4,6 +4,7 @@ import { CALENDAR_BASE_URL } from '../../constants';
 import axios from 'axios';
 import { base_url } from '../../config/urls';
 import { setUpdatedSlateInfo } from './authActions';
+import { Alert } from "react-native";
 
 export function setSlateTasks(tasks) {
   return {
@@ -86,13 +87,18 @@ export const fetchSlateTasks = (data) => dispatch => {
     });
 };
 
-export const slateTaskMarkComplete = (data) => dispatch => {
+export const slateTaskMarkComplete = (data, closeModal) => dispatch => {
   dispatch(setTaskUpdateStatus(true));
   axios.put(`${base_url}/api/task/complete`, data)
     .then(res => {
       if (res.status == 200 || res.status == 201) {
         let params = { user_id: data.user_id };
         dispatch(fetchSlateTasks(params));
+        Alert.alert("Success!", "Task Status changed to completed",
+          [
+            { text: 'Okay', onPress: () => { closeModal() } }
+          ]
+        );
       }
     }).catch(error => {
       dispatch(setTaskUpdateStatus(false));

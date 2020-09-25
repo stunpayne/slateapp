@@ -105,22 +105,37 @@ class AddTaskModal extends Component {
       var a = moment(slot.start.dateTime);
       var b = moment(slot.end.dateTime);
       var m_dif = b.diff(a, 'minutes'); //end-start
-      var isValid = a.isAfter(moment());
-      if (slot.slotType == SLOT_TYPE_FREE && m_dif > task.duration && isValid) {
+      var end_diff  = b.diff(moment(), 'minutes') ;
+      if (slot.slotType == SLOT_TYPE_FREE && m_dif > task.duration && end_diff > task.duration) {
         return slot
       };
     });
 
     if (typeof freeSlot !== 'undefined') {
       // console.log("free slot", freeSlot);
-      let data = {
-        start: {
-          dateTime: freeSlot.start.dateTime
-        }, end: {
-          dateTime: moment(freeSlot.start.dateTime).add(task.duration, "minutes").format()
-        },
-        summary: task.eventName
+      var a = moment(freeSlot.start.dateTime);
+      let data;
+
+      if (a.isAfter(moment())){
+        data = {
+          start: {
+            dateTime: freeSlot.start.dateTime
+          }, end: {
+            dateTime: moment(freeSlot.start.dateTime).add(task.duration, "minutes").format()
+          },
+          summary: task.eventName
+        };
+      } else {
+        data = {
+          start: {
+            dateTime: moment().format()
+          }, end: {
+            dateTime: moment().add(task.duration, "minutes").format()
+          },
+          summary: task.eventName
+        };
       };
+      
       return data;
     } else {
       // throw an error, free slot not found

@@ -13,7 +13,7 @@ class TaskDetailsModal extends Component {
   
   onPressMarkComplete = (taskId) => {
     let data = { user_id: this.props.slateInfo.id, id: taskId };
-    this.props.slateTaskMarkComplete(data);
+    this.props.slateTaskMarkComplete(data, ()=> this.props.closeModal());
   }
 
   render() {
