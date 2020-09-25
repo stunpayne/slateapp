@@ -311,17 +311,18 @@ class UserConfigurationScreen extends Component {
 
               <View style={{ marginTop: 0 }}>
                 <Form>
-                  <Item style={styles.item} inlineLabel disabled>
+                  <Item style={styles.item} stackedLabel>
                     <Label>
                       <Text style={styles.label}>Email</Text>
                     </Label>
                     <Input
+                      disabled
                       value={this.props.slateInfo && this.props.slateInfo.email ? this.props.slateInfo.email : ""}
                       style={styles.input}
                     />
                   </Item>
 
-                  <Item style={styles.item} inlineLabel>
+                  <Item style={styles.item} stackedLabel>
                     <Label>
                       <Text style={styles.label}>Name</Text>
                     </Label>
@@ -337,7 +338,7 @@ class UserConfigurationScreen extends Component {
                     </Text>
                   ) : null}
 
-                  <Item style={styles.item} inlineLabel>
+                  <Item style={styles.item} stackedLabel>
                     <Label>
                       <Text style={styles.label}>Profession</Text>
                     </Label>
@@ -361,14 +362,6 @@ class UserConfigurationScreen extends Component {
                       {dataLoading || isLoading ? <ActivityIndicator size="large" color="#4158fb" /> : null}
                     </View>
                   </TouchableOpacity>
-
-                  {/* <TouchableOpacity
-                    onPress={() => { NavigationService.navigateReset("Home") }}
-                  >
-                    <View style={styles.button}>
-                      <Text style={styles.buttonText}>Go to Home</Text>
-                    </View>
-                  </TouchableOpacity> */}
                 </Form>
               </View>
             </Tab>
