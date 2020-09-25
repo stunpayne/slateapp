@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import momentz from 'moment-timezone';
-import { addCalendarEvent, addSlateTask } from '../../../../../redux/actions/taskActions';
+import { addCalendarEvent, addSlateTask, setCalendarEvents } from '../../../../../redux/actions/taskActions';
 import { googleApiClient } from '../../../../../services/GoogleApiService';
 import { isValidDate, checkEndValid, extractDateTime, fetchDndSlots } from './helper';
 import { createSlots } from '../../../../../services/SlotterService';
@@ -105,7 +105,8 @@ class AddTaskModal extends Component {
       var a = moment(slot.start.dateTime);
       var b = moment(slot.end.dateTime);
       var m_dif = b.diff(a, 'minutes'); //end-start
-      if (slot.slotType == SLOT_TYPE_FREE && m_dif > task.duration) {
+      var isValid = a.isAfter(moment());
+      if (slot.slotType == SLOT_TYPE_FREE && m_dif > task.duration && isValid) {
         return slot
       };
     });
@@ -163,6 +164,7 @@ class AddTaskModal extends Component {
             };
 
             let calenderEvents = res.data.items;
+            this.props.setCalendarEvents(calenderEvents);
             let dndSlots = fetchDndSlots(now, deadline_ts, this.props.slateInfo);
             const refactoredEvents = calenderEvents.map(element => {
               return {
@@ -170,6 +172,7 @@ class AddTaskModal extends Component {
                 end: element.end
               }
             });
+
             let mergedEvents = [...refactoredEvents, ...dndSlots];
             let slots = createSlots(deadline_ts, mergedEvents);
             let scheduleEvent = this.scheduleSlot(task, slots);
@@ -428,4 +431,4 @@ const mapStateToProps = state => ({
   isLoading: state.task.isAdding
 });
 
-export default connect(mapStateToProps, { addCalendarEvent, addSlateTask })(AddTaskModal);
+export default connect(mapStateToProps, { addCalendarEvent, addSlateTask, setCalendarEvents })(AddTaskModal);

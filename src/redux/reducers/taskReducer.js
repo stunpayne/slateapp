@@ -1,4 +1,5 @@
 import { FETCH_SLATE_TASKS, TASK_DATA_LOADING_STATUS, TASK_DATA_ADDING_STATUS, TASK_DATA_UPDATE_STATUS, FETCH_GCALENDER_EVENTS } from '../types';
+import { mergeNewEventsWithOld, mergeNewTasksWithOld } from '../../services/MergeService';
 
 const initialState = {
   isLoading: false,
@@ -13,15 +14,15 @@ export default (state = initialState, action) => {
     case FETCH_SLATE_TASKS:
       return {
         ...state,
-        tasks: action.payload,
+        tasks: mergeNewTasksWithOld(state.tasks, action.payload),
         isLoading: false,
         isAdding: false,
-        isUpdating:false
+        isUpdating: false
       };
     case FETCH_GCALENDER_EVENTS:
       return {
         ...state,
-        events: action.payload,
+        events: mergeNewEventsWithOld(state.events, action.payload),
         isLoading: false,
       };
     case TASK_DATA_LOADING_STATUS:
