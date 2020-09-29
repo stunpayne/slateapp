@@ -95,10 +95,12 @@ class LoginScreen extends Component {
         <Text style={styles.title}>
           Log In
         </Text>
-        <Image
-          style={styles.logo}
-          source={Images.slate_icon_dark}
-        />
+        <View style={styles.logoContainer}>
+          <Image
+            style={styles.logo}
+            source={Images.slate_icon_light}
+          />
+        </View>
         <Text style={styles.description}>
           Sign in with
         </Text>

@@ -28,6 +28,10 @@ export const styles = StyleSheet.create({
   logo:{
     width: 100,
     height: 100,
-    marginBottom:10
+  },
+  logoContainer:{
+    elevation:4,
+    marginBottom:10,
+    borderRadius: 49,
   }
 });

@@ -24,7 +24,7 @@ const Item = ({ item, onPress }) => (
       <View style={styles.itemMainView}>
         <Image
           style={styles.logo}
-          source={Images.slate_icon_dark}
+          source={Images.dart}
         />
         <View style={styles.itemDescription}>
           <Text style={styles.title}>{item.title}</Text>

@@ -148,9 +148,13 @@ export default connect(mapStateToProps, { fetchCalendarEvents })(HomeScreen);
 const styles = StyleSheet.create({
   tabStyle: {
     backgroundColor: "#ffffff",
+    borderTopWidth:1,
+    borderTopColor:"#e3e3e3",
+
   },
   activeTabStyle: {
-    backgroundColor: "#4158fb",
+    // backgroundColor: "#4158fb",
+    backgroundColor: "#e3e3e3",
   },
   tabIcon: {
     height: 30,

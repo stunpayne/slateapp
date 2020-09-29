@@ -12,4 +12,7 @@ export default {
   clock: require('../assets/images/clock.png'), 
   calendar: require('../assets/images/calendar.png'),
   user_profile_image:require('../assets/images/user_profile_image.png'),
+  dart:require('../assets/images/dart.png'),
+  heart_sign:require('../assets/images/heart_sign.png'),
+  checklist:require('../assets/images/checklist.png'),
 }
