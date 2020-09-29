@@ -68,7 +68,7 @@ class CalendarScreen extends Component {
     if(e.kind == calendarEventColor.slate){
       return {backgroundColor: "#4158fb"};
     } else {
-      return {backgroundColor: "#4285F4"};
+      return {backgroundColor: "#713b9b"};
     }
   };
 

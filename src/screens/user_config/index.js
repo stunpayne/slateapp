@@ -173,14 +173,14 @@ class UserConfigurationScreen extends Component {
     const { errors, fields, show, dataLoading, timezones } = this.state;
     const { isLoading } = this.props;
     const RED_ASTERISK = <Text style={{ color: "#ff0000" }}>*</Text>;
-
+    const USER_PROFILE_IMAGE = this.props.user && this.props.user.photo ? {uri: this.props.user.photo}: Images.user_profile_image;
     return (
       <Container>
         <Content>
           <View style={styles.topContainer}>
             <Image
               style={styles.user_profile_image}
-              source={Images.user_profile_image}
+              source={USER_PROFILE_IMAGE}
             />
           </View>
 
@@ -373,6 +373,7 @@ class UserConfigurationScreen extends Component {
 }
 
 const mapStateToProps = state => ({
+  user:state.auth.userInfo.user,
   userInfo: state.auth.userInfo,
   slateInfo: state.auth.slateInfo,
   isLoading: state.auth.isLoading
