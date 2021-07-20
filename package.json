@@ -23,7 +23,7 @@
     "moment-timezone": "^0.5.31",
     "native-base": "^2.13.12",
     "react": "16.11.0",
-    "react-native": "0.62.2",
+    "react-native": "0.62.3",
     "react-native-animated-swiper": "0.0.23",
     "react-native-big-calendar": "^0.5.0",
     "react-native-calendar-strip": "^2.0.9",
